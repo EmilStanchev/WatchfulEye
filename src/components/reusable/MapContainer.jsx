@@ -1,3 +1,5 @@
+// MapComponent.js
+
 import {
   MapContainer,
   TileLayer,
@@ -6,10 +8,20 @@ import {
   Tooltip,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import incidents from "../../assets/data/data";
 import Modal from "./Modal";
+import useIncidents from "../../hooks/useIncidents";
 
 const MapComponent = () => {
+  const { incidents = [], loading, error } = useIncidents();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading incidents: {error.message}</div>;
+  }
+
   return (
     <div className="h-screen w-screen flex flex-col">
       <MapContainer
@@ -24,7 +36,14 @@ const MapComponent = () => {
         {incidents.map((incident) => (
           <CircleMarker
             key={incident.id}
-            center={[incident.coordinates.lat, incident.coordinates.lng]}
+            center={[
+              incident.coordinates._lat
+                ? incident.coordinates._lat
+                : incident.coordinates.lat,
+              incident.coordinates._long
+                ? incident.coordinates._long
+                : incident.coordinates.lng,
+            ]}
             radius={5}
             fillOpacity={0.5}
           >

@@ -1,10 +1,25 @@
 import "./App.css";
-import MapComponent from "./components/reusable/MapContainer";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter } from "react-router-dom";
+
+import Navigation from "./navigation/NavBar";
+import AppRouter from "./navigation/AppRouter";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <>
-      <MapComponent />
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <div className="h-screen flex flex-col">
+            <Navigation />
+            <div className="flex-grow">
+              <AppRouter />
+            </div>
+          </div>
+        </BrowserRouter>
+      </QueryClientProvider>
     </>
   );
 }
