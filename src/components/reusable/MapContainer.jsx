@@ -1,5 +1,3 @@
-// MapComponent.js
-
 import {
   MapContainer,
   TileLayer,
@@ -9,7 +7,10 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Modal from "./Modal";
-import useIncidents from "../../hooks/useIncidents";
+import { useIncidents } from "../../hooks/incidents";
+import { FaPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import TooltipButton from "../UI/TooltipButton";
 
 const MapComponent = () => {
   const { incidents = [], loading, error } = useIncidents();
@@ -23,11 +24,26 @@ const MapComponent = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col">
+    <div className=" w-full flex flex-col ">
+      <div className="absolute bottom-10 right-10 z-50">
+        <Link
+          to="/addIncident"
+          aria-placeholder="Add incident"
+          className="w-16 h-16 bg-blue-600 text-black rounded-full shadow-xl flex justify-center items-center hover:bg-blue-700 active:scale-95 transition-all duration-300"
+          aria-label="Add Incident"
+        >
+          <FaPlus className="h-8 w-8" />
+          <TooltipButton
+            tooltipText="Add New Incident"
+            icon={FaPlus}
+            onClick={() => console.log("Button clicked!")}
+          />
+        </Link>
+      </div>
       <MapContainer
         center={[42.66291, 23.37234]}
         zoom={15}
-        className="h-full w-full"
+        className="h-[92%] w-full absolute z-20"
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

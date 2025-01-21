@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { addIncident } from "../../services/incidents"; // Import your custom service function
+import { addIncident } from "../../services/incidents";
 import {
   MapContainer,
   TileLayer,
@@ -9,13 +9,15 @@ import {
   Popup,
   useMapEvents,
 } from "react-leaflet";
+import { FaTimesCircle } from "react-icons/fa";
+import { auth } from "../../../FirebaseConfig";
 
 const AddIncident = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [coordinates, setCoordinates] = useState({ lat: "", lng: "" });
   const [imageUrls, setImageUrls] = useState([]);
-
+  const user = auth?.currentUser;
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -25,7 +27,7 @@ const AddIncident = () => {
         lat: coordinates.lat,
         lng: coordinates.lng,
       },
-      images: imageUrls, // For the image URLs
+      images: imageUrls,
     },
     validationSchema: Yup.object({
       title: Yup.string()
@@ -53,20 +55,22 @@ const AddIncident = () => {
       setMessage(null);
 
       try {
-        // Use the addIncident function to save the incident to Firestore
         const newIncident = {
           title: values.title,
           description: values.description,
           address: values.address,
           coordinates: values.coordinates,
-          images: imageUrls, // Store image URLs in the incident document
+          images: imageUrls,
+          createdAt: Date.now(),
+          createdBy: user?.email,
         };
+        console.log(newIncident);
 
         await addIncident(newIncident);
 
         setMessage({ type: "success", text: "Incident added successfully!" });
         resetForm();
-        setImageUrls([]); // Clear image URLs state
+        setImageUrls([]);
       } catch (error) {
         setMessage({ type: "error", text: error.message });
       } finally {
@@ -75,7 +79,6 @@ const AddIncident = () => {
     },
   });
 
-  // Handle map click and update coordinates
   const handleMapClick = (e) => {
     const { lat, lng } = e.latlng;
     setCoordinates({ lat, lng });
@@ -90,7 +93,6 @@ const AddIncident = () => {
     return null;
   };
 
-  // Handle input for image URLs
   const handleImageUrlChange = (e) => {
     const value = e.target.value;
     if (value) {
@@ -98,167 +100,222 @@ const AddIncident = () => {
     }
   };
 
-  // Handle removing an image URL
   const removeImageUrl = (url) => {
     setImageUrls(imageUrls.filter((imageUrl) => imageUrl !== url));
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
-      <h1 className="text-xl font-bold mb-4">Add Incident</h1>
-      {message && (
-        <p
-          className={`mb-4 text-sm ${
-            message.type === "success" ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {message.text}
-        </p>
-      )}
-      <form onSubmit={formik.handleSubmit}>
-        {/* Title */}
-        <div className="mb-4">
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700"
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300">
+      <div className="w-full max-w-3xl bg-white shadow-lg rounded-xl p-8 space-y-8">
+        <h1 className="text-2xl font-bold text-gray-800 text-center">
+          Add New Incident
+        </h1>
+        {message && (
+          <p
+            className={`text-center text-sm font-medium mb-4 ${
+              message.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
           >
-            Title
-          </label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.title}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-          {formik.touched.title && formik.errors.title ? (
-            <p className="text-red-500 text-sm mt-1">{formik.errors.title}</p>
-          ) : null}
-        </div>
-
-        {/* Description */}
-        <div className="mb-4">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.description}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-          {formik.touched.description && formik.errors.description ? (
-            <p className="text-red-500 text-sm mt-1">
-              {formik.errors.description}
-            </p>
-          ) : null}
-        </div>
-
-        {/* Address */}
-        <div className="mb-4">
-          <label
-            htmlFor="address"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Address
-          </label>
-          <input
-            id="address"
-            name="address"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.address}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-          {formik.touched.address && formik.errors.address ? (
-            <p className="text-red-500 text-sm mt-1">{formik.errors.address}</p>
-          ) : null}
-        </div>
-
-        {/* Image URLs */}
-        <div className="mb-4">
-          <label
-            htmlFor="images"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Image URLs
-          </label>
-          <input
-            type="text"
-            id="images"
-            placeholder="Enter Image URL"
-            onBlur={formik.handleBlur}
-            onChange={handleImageUrlChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            Enter image URLs, one per line.
+            {message.text}
           </p>
-        </div>
+        )}
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Title
+              </label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.title}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              />
+              {formik.touched.title && formik.errors.title && (
+                <p className="text-red-500 text-sm mt-1">
+                  {formik.errors.title}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Address
+              </label>
+              <input
+                id="address"
+                name="address"
+                type="text"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.address}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              />
+              {formik.touched.address && formik.errors.address && (
+                <p className="text-red-500 text-sm mt-1">
+                  {formik.errors.address}
+                </p>
+              )}
+            </div>
+          </div>
 
-        {/* Display added URLs */}
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-gray-700">Added Images:</h3>
-          <ul className="list-disc pl-5">
-            {imageUrls.map((url, index) => (
-              <li key={index} className="flex justify-between items-center">
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500"
-                >
-                  {url}
-                </a>
-                <button
-                  type="button"
-                  onClick={() => removeImageUrl(url)}
-                  className="ml-2 text-red-500"
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Map */}
-        <div className="mb-4">
-          <MapContainer
-            center={[42.698334, 23.319941]}
-            zoom={10}
-            scrollWheelZoom={false}
-            className="w-full h-64 rounded-lg"
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <MapClickHandler />
-            {coordinates.lat && coordinates.lng && (
-              <Marker position={[coordinates.lat, coordinates.lng]}>
-                <Popup>Incident Location</Popup>
-              </Marker>
+          <div>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.description}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+            {formik.touched.description && formik.errors.description && (
+              <p className="text-red-500 text-sm mt-1">
+                {formik.errors.description}
+              </p>
             )}
-          </MapContainer>
-        </div>
+          </div>
 
-        {/* Submit */}
-        <div className="mt-6 flex justify-center">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-600 focus:outline-none"
-          >
-            {isSubmitting ? "Submitting..." : "Add Incident"}
-          </button>
-        </div>
-      </form>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="coordinates.lat"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Latitude
+              </label>
+              <input
+                id="coordinates.lat"
+                name="coordinates.lat"
+                type="number"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.coordinates.lat}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              />
+              {formik.touched.coordinates?.lat &&
+                formik.errors.coordinates?.lat && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.coordinates.lat}
+                  </p>
+                )}
+            </div>
+            <div>
+              <label
+                htmlFor="coordinates.lng"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Longitude
+              </label>
+              <input
+                id="coordinates.lng"
+                name="coordinates.lng"
+                type="number"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.coordinates.lng}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              />
+              {formik.touched.coordinates?.lng &&
+                formik.errors.coordinates?.lng && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.coordinates.lng}
+                  </p>
+                )}
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="images"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Image URLs
+            </label>
+            <input
+              type="text"
+              id="images"
+              placeholder="Enter Image URL"
+              onBlur={formik.handleBlur}
+              onChange={handleImageUrlChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Enter image URLs, one per line.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Added Images:
+            </h3>
+            <ul className="list-disc pl-5">
+              {imageUrls.map((url, index) => (
+                <li key={index} className="flex justify-between items-center">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 truncate"
+                  >
+                    {url}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => removeImageUrl(url)}
+                    className="ml-2 text-red-500"
+                  >
+                    <FaTimesCircle />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Map
+            </label>
+            <MapContainer
+              center={[42.698334, 23.319941]}
+              zoom={10}
+              scrollWheelZoom={false}
+              className="w-full h-64 rounded-lg"
+            >
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <MapClickHandler />
+              {coordinates.lat && coordinates.lng && (
+                <Marker position={[coordinates.lat, coordinates.lng]}>
+                  <Popup>Incident Location</Popup>
+                </Marker>
+              )}
+            </MapContainer>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full sm:w-auto bg-blue-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+            >
+              {isSubmitting ? "Submitting..." : "Add Incident"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
