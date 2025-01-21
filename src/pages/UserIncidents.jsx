@@ -1,10 +1,33 @@
 /* eslint-disable react/prop-types */
+import { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useUserIncidents } from "../hooks/incidents";
 import { deleteIncident } from "../services/incidents";
+import ConfirmationModal from "../components/reusable/ConfirmationModal"; // Import the modal
 
-const IncidentTable = ({ userEmail }) => {
-  const { incidents, error } = useUserIncidents(userEmail);
+const UserIncidents = ({ userEmail }) => {
+  const { incidents, error, refetchIncidents } = useUserIncidents(userEmail);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [incidentToDelete, setIncidentToDelete] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const onDeleteIncident = (id) => {
+    console.log(id);
+    deleteIncident(id);
+    refetchIncidents();
+    setSuccessMessage("Incident deleted successfully!");
+    setTimeout(() => setSuccessMessage(""), 3000); // Hide message after 3 seconds
+    setIsModalOpen(false); // Close the modal
+  };
+
+  const handleDeleteClick = (id) => {
+    setIncidentToDelete(id);
+    setIsModalOpen(true); // Show confirmation modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   if (error) {
     return (
@@ -68,7 +91,7 @@ const IncidentTable = ({ userEmail }) => {
                 </button>
                 {/* Delete Button */}
                 <button
-                  onClick={() => deleteIncident(incident?.id)}
+                  onClick={() => handleDeleteClick(incident?.id)}
                   className="text-red-500 hover:text-red-700 transition duration-150"
                   title="Delete Incident"
                 >
@@ -79,8 +102,23 @@ const IncidentTable = ({ userEmail }) => {
           ))}
         </tbody>
       </table>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={() => onDeleteIncident(incidentToDelete)}
+        message="Are you sure you want to delete this incident?"
+      />
+
+      {/* Success Message */}
+      {successMessage && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
+          {successMessage}
+        </div>
+      )}
     </div>
   );
 };
 
-export default IncidentTable;
+export default UserIncidents;

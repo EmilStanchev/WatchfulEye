@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import TestimonialCard from "./TestimonialCard";
 
 const testimonials = [
@@ -24,11 +22,11 @@ const testimonials = [
 ];
 
 const TestimonialsSection = () => (
-  <div className="relative py-20  bg-slate-50 text-black overflow-hidden">
+  <div className="relative py-2 text-white overflow-hidden bg-black">
     <div className="absolute inset-0 bg-pattern opacity-20"></div>
     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-4xl font-extrabold text-center mb-12">
-        What My Clients Say
+        What Our Users Say
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
         {testimonials.map((testimonial, index) => (

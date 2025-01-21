@@ -62,10 +62,10 @@ export default function FeaturesSection() {
   return (
     <section
       id="features"
-      className="py-20 bg-gradient-to-b from-white to-gray-600"
+      className="py-20 bg-gradient-to-b from-black to-gray-400"
     >
       <div className="container mx-auto px-6 lg:px-12">
-        <h2 className="text-center text-4xl sm:text-5xl font-extrabold text-black mb-12">
+        <h2 className="text-center text-4xl sm:text-5xl font-extrabold text-white mb-12">
           Built for Your <span className="text-blue-500">Peace of Mind</span>
         </h2>
         <div className="relative">

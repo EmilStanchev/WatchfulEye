@@ -17,12 +17,13 @@ const AddIncident = () => {
   const [message, setMessage] = useState(null);
   const [coordinates, setCoordinates] = useState({ lat: "", lng: "" });
   const [imageUrls, setImageUrls] = useState([]);
+  const [address, setAddress] = useState("");
   const user = auth?.currentUser;
+
   const formik = useFormik({
     initialValues: {
       title: "",
       description: "",
-      address: "",
       coordinates: {
         lat: coordinates.lat,
         lng: coordinates.lng,
@@ -36,9 +37,6 @@ const AddIncident = () => {
       description: Yup.string()
         .max(500, "Description must be 500 characters or less")
         .required("Description is required"),
-      address: Yup.string()
-        .max(200, "Address must be 200 characters or less")
-        .required("Address is required"),
       coordinates: Yup.object({
         lat: Yup.number()
           .required("Latitude is required")
@@ -58,7 +56,7 @@ const AddIncident = () => {
         const newIncident = {
           title: values.title,
           description: values.description,
-          address: values.address,
+          address: address,
           coordinates: values.coordinates,
           images: imageUrls,
           createdAt: Date.now(),
@@ -71,6 +69,7 @@ const AddIncident = () => {
         setMessage({ type: "success", text: "Incident added successfully!" });
         resetForm();
         setImageUrls([]);
+        setAddress(""); // Reset address after submit
       } catch (error) {
         setMessage({ type: "error", text: error.message });
       } finally {
@@ -84,6 +83,21 @@ const AddIncident = () => {
     setCoordinates({ lat, lng });
     formik.setFieldValue("coordinates.lat", lat);
     formik.setFieldValue("coordinates.lng", lng);
+
+    // Fetch the address using the coordinates
+    fetchAddress(lat, lng);
+  };
+
+  const fetchAddress = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+      );
+      const data = await response.json();
+      setAddress(data.display_name); // Set the address from the API response
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
   };
 
   const MapClickHandler = () => {
@@ -110,69 +124,36 @@ const AddIncident = () => {
         <h1 className="text-2xl font-bold text-gray-800 text-center">
           Add New Incident
         </h1>
-        {message && (
-          <p
-            className={`text-center text-sm font-medium mb-4 ${
-              message.type === "success" ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {message.text}
-          </p>
-        )}
+
         <form onSubmit={formik.handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Title
-              </label>
-              <input
-                id="title"
-                name="title"
-                type="text"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.title}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              />
-              {formik.touched.title && formik.errors.title && (
-                <p className="text-red-500 text-sm mt-1">
-                  {formik.errors.title}
-                </p>
-              )}
-            </div>
-            <div>
-              <label
-                htmlFor="address"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Address
-              </label>
-              <input
-                id="address"
-                name="address"
-                type="text"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.address}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              />
-              {formik.touched.address && formik.errors.address && (
-                <p className="text-red-500 text-sm mt-1">
-                  {formik.errors.address}
-                </p>
-              )}
-            </div>
+          <div>
+            <label
+              htmlFor="title"
+              className="block text-gray-700 text-sm font-medium mb-2"
+            >
+              Incident Title
+            </label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.title}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {formik.touched.title && formik.errors.title && (
+              <p className="text-red-500 text-xs mt-2">{formik.errors.title}</p>
+            )}
           </div>
 
+          {/* Description */}
           <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-gray-700 text-sm font-medium mb-2"
             >
-              Description
+              Incident Description
             </label>
             <textarea
               id="description"
@@ -180,63 +161,32 @@ const AddIncident = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.description}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              rows="4"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {formik.touched.description && formik.errors.description && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-red-500 text-xs mt-2">
                 {formik.errors.description}
               </p>
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Address (automatically fetched from map) */}
+          {address && (
             <div>
-              <label
-                htmlFor="coordinates.lat"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Latitude
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Address
               </label>
               <input
-                id="coordinates.lat"
-                name="coordinates.lat"
-                type="number"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.coordinates.lat}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                id="address"
+                name="address"
+                type="text"
+                value={address}
+                readOnly
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {formik.touched.coordinates?.lat &&
-                formik.errors.coordinates?.lat && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formik.errors.coordinates.lat}
-                  </p>
-                )}
             </div>
-            <div>
-              <label
-                htmlFor="coordinates.lng"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Longitude
-              </label>
-              <input
-                id="coordinates.lng"
-                name="coordinates.lng"
-                type="number"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.coordinates.lng}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              />
-              {formik.touched.coordinates?.lng &&
-                formik.errors.coordinates?.lng && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formik.errors.coordinates.lng}
-                  </p>
-                )}
-            </div>
-          </div>
+          )}
 
           <div>
             <label
@@ -311,10 +261,19 @@ const AddIncident = () => {
               disabled={isSubmitting}
               className="w-full sm:w-auto bg-blue-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
             >
-              {isSubmitting ? "Submitting..." : "Add Incident"}
+              {isSubmitting ? "Submitting..." : "Submit Incident"}
             </button>
           </div>
         </form>
+        {message && (
+          <p
+            className={`text-center text-sm font-medium mb-4 ${
+              message.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {message.text}
+          </p>
+        )}
       </div>
     </div>
   );

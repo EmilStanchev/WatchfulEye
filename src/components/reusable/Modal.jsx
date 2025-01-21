@@ -21,7 +21,7 @@ const Modal = ({ incident }) => {
         Reported at:
         <br />
         {incident?.createdAt
-          ? new Date(incident?.createdAt * 1000).toUTCString()
+          ? new Date(incident?.createdAt).toUTCString()
           : "Long before"}
       </p>
       <p className="text-red-500 text-center">
