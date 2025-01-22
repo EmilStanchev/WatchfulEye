@@ -1,17 +1,20 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { useUserIncidents } from "../hooks/incidents";
+import { useIncidents, useUserIncidents } from "../hooks/incidents";
 import { deleteIncident } from "../services/incidents";
-import ConfirmationModal from "../components/reusable/ConfirmationModal"; // Import the modal
+import ConfirmationModal from "../components/reusable/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
+import UserMetrics from "../components/UI/User/UserMetrics"; // Import the new Metrics component
 
 const UserIncidents = ({ userEmail }) => {
   const { incidents, error, refetchIncidents } = useUserIncidents(userEmail);
+  const { incidents: totalIncidents } = useIncidents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [incidentToDelete, setIncidentToDelete] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
+  const userIncidentsCount = incidents?.length || 0;
   const navigate = useNavigate();
 
   const handleEditClick = (id) => {
@@ -19,17 +22,16 @@ const UserIncidents = ({ userEmail }) => {
   };
 
   const onDeleteIncident = (id) => {
-    console.log(id);
     deleteIncident(id);
     refetchIncidents();
     setSuccessMessage("Incident deleted successfully!");
-    setTimeout(() => setSuccessMessage(""), 3000); // Hide message after 3 seconds
-    setIsModalOpen(false); // Close the modal
+    setTimeout(() => setSuccessMessage(""), 3000);
+    setIsModalOpen(false);
   };
 
   const handleDeleteClick = (id) => {
     setIncidentToDelete(id);
-    setIsModalOpen(true); // Show confirmation modal
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -54,7 +56,11 @@ const UserIncidents = ({ userEmail }) => {
 
   return (
     <div className="overflow-x-auto p-4">
-      <table className="min-w-full bg-white rounded-lg shadow-md border-collapse">
+      <UserMetrics
+        userIncidentsCount={userIncidentsCount}
+        totalIncidentsCount={totalIncidents?.length}
+      />
+      <table className="min-w-full bg-white rounded-lg shadow-md border-collapse mt-6">
         <thead>
           <tr className="bg-gray-100 border-b">
             <th className="text-left px-6 py-4 font-medium text-gray-600">
@@ -89,7 +95,6 @@ const UserIncidents = ({ userEmail }) => {
               </td>
               <td className="px-6 py-4 text-gray-500">{incident?.address}</td>
               <td className="px-6 py-4 text-center space-x-4">
-                {/* Edit Button */}
                 <button
                   onClick={() => handleEditClick(incident?.id)}
                   className="text-blue-500 hover:text-blue-700 transition duration-150"
@@ -97,7 +102,6 @@ const UserIncidents = ({ userEmail }) => {
                 >
                   <FaEdit size={18} />
                 </button>
-                {/* Delete Button */}
                 <button
                   onClick={() => handleDeleteClick(incident?.id)}
                   className="text-red-500 hover:text-red-700 transition duration-150"
@@ -111,7 +115,6 @@ const UserIncidents = ({ userEmail }) => {
         </tbody>
       </table>
 
-      {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -119,7 +122,6 @@ const UserIncidents = ({ userEmail }) => {
         message="Are you sure you want to delete this incident?"
       />
 
-      {/* Success Message */}
       {successMessage && (
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
           {successMessage}

@@ -18,6 +18,8 @@ const AddIncident = () => {
   const [coordinates, setCoordinates] = useState({ lat: "", lng: "" });
   const [imageUrls, setImageUrls] = useState([]);
   const [address, setAddress] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+
   const user = auth?.currentUser;
 
   const formik = useFormik({
@@ -61,6 +63,7 @@ const AddIncident = () => {
           images: imageUrls,
           createdAt: Date.now(),
           createdBy: user?.email,
+          neighborhood: neighborhood,
         };
         console.log(newIncident);
 
@@ -69,7 +72,8 @@ const AddIncident = () => {
         setMessage({ type: "success", text: "Incident added successfully!" });
         resetForm();
         setImageUrls([]);
-        setAddress(""); // Reset address after submit
+        setAddress("");
+        setNeighborhood("");
       } catch (error) {
         setMessage({ type: "error", text: error.message });
       } finally {
@@ -77,6 +81,29 @@ const AddIncident = () => {
       }
     },
   });
+  const fetchNeighborhood = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+      );
+      const data = await response.json();
+
+      // Extract the neighborhood
+      const address = data.address;
+      let neighborhood =
+        address.neighbourhood || address.suburb || address.city_district;
+
+      // Fallback if neighborhood is not available
+      if (!neighborhood) {
+        neighborhood = "Unknown Neighborhood";
+      }
+      setNeighborhood(neighborhood);
+      return neighborhood;
+    } catch (error) {
+      console.error("Error fetching neighborhood:", error);
+      return "Error fetching neighborhood";
+    }
+  };
 
   const handleMapClick = (e) => {
     const { lat, lng } = e.latlng;
@@ -85,6 +112,7 @@ const AddIncident = () => {
     formik.setFieldValue("coordinates.lng", lng);
 
     fetchAddress(lat, lng);
+    fetchNeighborhood(lat, lng);
   };
 
   const fetchAddress = async (lat, lng) => {

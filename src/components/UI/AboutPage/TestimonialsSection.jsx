@@ -1,4 +1,4 @@
-import TestimonialCard from "./TestimonialCard";
+import TestimonialCard from "../cards/TestimonialCard";
 
 const testimonials = [
   {

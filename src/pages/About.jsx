@@ -10,7 +10,6 @@ const About = () => {
   return (
     <div className="bg-black text-white w-full h-full">
       <HeroSection />
-
       <FeaturesSection />
       <WhyChooseUs />
       <Metrics />
