@@ -9,6 +9,7 @@ import About from "../pages/About";
 import EditIncident from "../pages/EditIncident";
 import ManageSubscriptions from "../pages/ManageSubscription";
 import SubscribedIncidents from "../pages/SubscribedIncidents";
+import SubscriptionsTable from "../pages/SubscriptionsTable";
 
 const AppRouter = ({ user }) => {
   return (
@@ -23,7 +24,11 @@ const AppRouter = ({ user }) => {
       <Route
         path="/subscribeToNeighbor"
         element={user ? <ManageSubscriptions userId={user?.uid} /> : <Login />}
-      />{" "}
+      />
+      <Route
+        path="/mySubscriptions"
+        element={user ? <SubscriptionsTable userId={user?.uid} /> : <Login />}
+      />
       <Route
         path="/subscribedIncidents"
         element={user ? <SubscribedIncidents userId={user?.uid} /> : <Login />}

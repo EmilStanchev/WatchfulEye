@@ -1,5 +1,13 @@
 import { db } from "../../FirebaseConfig"; // Your Firebase configuration
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
 export const subscribeToNeighborhood = async (userId, neighborhoodName) => {
   try {
@@ -46,4 +54,18 @@ export const fetchSubscribedIncidents = async (userId) => {
     console.error("Error fetching subscribed incidents:", error);
     throw new Error("Failed to fetch subscribed incidents.");
   }
+};
+
+export const getUserSubscriptions = async (userId) => {
+  const subscriptionsRef = collection(db, "subscriptions");
+  const querySnapshot = await getDocs(subscriptionsRef);
+  return querySnapshot.docs
+    .map((doc) => ({ id: doc.id, ...doc.data() }))
+    .filter((sub) => sub.userId === userId); // Filter by userId
+};
+
+// Unsubscribe from a neighborhood
+export const unsubscribeFromNeighborhood = async (subscriptionId) => {
+  const subscriptionRef = doc(db, "subscriptions", subscriptionId);
+  await deleteDoc(subscriptionRef);
 };
