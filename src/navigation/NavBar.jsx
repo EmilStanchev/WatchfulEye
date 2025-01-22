@@ -25,10 +25,23 @@ const Navigation = ({ user }) => {
     <nav className="bg-gray-800 text-white shadow-md sticky z-50 top-0">
       <div className="max-w-full mx-auto px-2 md:px-4 py-2 flex justify-between items-center">
         {/* Website Title */}
-        <div className="text-sm sm:text-base md:text-lg font-bold truncate">
-          <Link to="/">
-            <img src={logo} alt="website logo" className="w-40 h-8" />
-          </Link>
+        <div className="flex gap-10">
+          <div className="text-sm sm:text-base md:text-lg font-bold truncate">
+            <Link to="/">
+              <img src={logo} alt="website logo" className="w-40 h-8" />
+            </Link>
+          </div>
+          <div className="hidden lg:flex lg:space-x-4 gap-10">
+            {formattedLinks?.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path ? `/${item.path}` : `/${item.name.toLowerCase()}`}
+                className="capitalize text-sm md:text-base text-white hover:text-gray-400"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Hamburger menu for mobile */}
@@ -55,17 +68,6 @@ const Navigation = ({ user }) => {
         </div>
 
         {/* Desktop navigation links */}
-        <div className="hidden lg:flex lg:space-x-4">
-          {formattedLinks?.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path ? `/${item.path}` : `/${item.name.toLowerCase()}`}
-              className="capitalize text-sm md:text-base text-white hover:text-gray-400"
-            >
-              {item.name}
-            </Link>
-          ))}
-        </div>
 
         {/* Logout button for desktop */}
         {user && (

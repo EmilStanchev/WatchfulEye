@@ -4,7 +4,7 @@ export const links = [
     path: "myReports",
   },
   {
-    name: "Subscribed neighborhoods",
+    name: "My neighborhoods",
     path: "subscribedIncidents",
   },
   {

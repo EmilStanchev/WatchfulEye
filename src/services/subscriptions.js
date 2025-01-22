@@ -21,14 +21,10 @@ export const subscribeToNeighborhood = async (userId, neighborhoodName) => {
 
 export const fetchSubscribedIncidents = async (userId) => {
   try {
-    console.log(userId);
-
-    // Get all subscriptions for the user
     const subscriptionRef = collection(db, "subscriptions");
     const q = query(subscriptionRef, where("userId", "==", userId));
     const subscriptionSnapshot = await getDocs(q);
 
-    // Extract valid neighborhood names
     const neighborhoods = subscriptionSnapshot.docs
       .map((doc) => doc.data()?.neighborhoodName)
       .filter(
@@ -36,13 +32,8 @@ export const fetchSubscribedIncidents = async (userId) => {
       );
 
     if (neighborhoods.length === 0) {
-      // Return an empty array if no neighborhoods are subscribed to
       return [];
     }
-    neighborhoods?.map((neighborhood) => {
-      console.log(neighborhood);
-    });
-    // Fetch incidents for these neighborhoods
     const incidentsRef = collection(db, "incidents");
     const incidentQuery = query(
       incidentsRef,

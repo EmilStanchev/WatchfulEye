@@ -28,7 +28,6 @@ const getIncidents = async () => {
 };
 const addIncident = async (incident) => {
   try {
-    console.log(incident, "from service");
     await setDoc(doc(db, "incidents", uuidv4()), incident);
   } catch (error) {
     console.error("Error adding incident:", error);
@@ -74,7 +73,6 @@ const getIncidentById = async (id) => {
 
 // Update an incident
 const updateIncident = async (id, updatedData) => {
-  console.log(updatedData, "from service bvefore update");
   const incidentDoc = doc(db, "incidents", id);
   await updateDoc(incidentDoc, updatedData);
 };
