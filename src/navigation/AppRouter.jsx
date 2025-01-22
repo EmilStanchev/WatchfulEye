@@ -12,14 +12,13 @@ const AppRouter = ({ user }) => {
 
   return (
     <Routes>
-      <Route path="/" element={user ? <MapComponent /> : <Login />} />
+      <Route path="/" element={user ? <MapComponent /> : <About />} />
       <Route path="/addIncident" element={<AddIncidentForm />} />
       <Route
         path="/myReports"
         element={user ? <UserIncidents userEmail={user?.email} /> : <Login />}
       />
-      <Route path="/about" element={user ? <About /> : <Login />} />
-
+      <Route path="/about" element={<About />} />
       <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
 
       <Route

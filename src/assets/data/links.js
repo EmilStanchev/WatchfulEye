@@ -15,4 +15,8 @@ export const notAuthorizedLinks = [
   {
     name: "Register",
   },
+  {
+    name: "About us",
+    path: "about",
+  },
 ];

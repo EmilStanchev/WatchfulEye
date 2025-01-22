@@ -32,7 +32,10 @@ const steps = [
 
 export default function AddIncidentTimeline() {
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-400 to-black ">
+    <section
+      id="timeline"
+      className="py-16 bg-gradient-to-b from-gray-400 to-black "
+    >
       <div className="container mx-auto px-6 lg:px-12 text-center">
         <h2 className="text-4xl font-bold text-white mb-8">
           How to Add a New <span className="text-blue-500">Incident</span>

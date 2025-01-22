@@ -29,7 +29,10 @@ const metrics = [
 
 export default function Metrics() {
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-100 to-gray-400 text-black">
+    <section
+      id="metrics"
+      className="py-20 bg-gradient-to-b from-gray-100 to-gray-400 text-black"
+    >
       <div className="container mx-auto px-6 lg:px-12 text-center">
         <h2 className="text-4xl sm:text-5xl font-extrabold mb-12">
           Our <span className="text-blue-500">Impact in Numbers</span>

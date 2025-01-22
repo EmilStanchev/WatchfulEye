@@ -60,7 +60,7 @@ const UserIncidents = ({ userEmail }) => {
               Date
             </th>
             <th className="text-left px-6 py-4 font-medium text-gray-600">
-              Status
+              Address
             </th>
             <th className="text-center px-6 py-4 font-medium text-gray-600">
               Actions

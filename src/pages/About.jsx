@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 const About = () => {
   return (
-    <div className="bg-black text-white">
+    <div className="bg-black text-white w-full h-full">
       <HeroSection />
 
       <FeaturesSection />
@@ -26,7 +26,7 @@ const About = () => {
             Join the movement to create a safer, more connected neighborhood.
           </p>
           <Link
-            to={"/"}
+            to={"/login"}
             className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium text-lg hover:bg-blue-600 transition duration-200"
           >
             Get Started Today
@@ -34,7 +34,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-black py-10">
         <div className="container mx-auto text-center">
           <p className="text-gray-400 text-sm">

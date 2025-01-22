@@ -22,7 +22,10 @@ const testimonials = [
 ];
 
 const TestimonialsSection = () => (
-  <div className="relative py-2 text-white overflow-hidden bg-black">
+  <div
+    id="testimonials"
+    className="relative py-2 text-white overflow-hidden  bg-black"
+  >
     <div className="absolute inset-0 bg-pattern opacity-20"></div>
     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-4xl font-extrabold text-center mb-12">
