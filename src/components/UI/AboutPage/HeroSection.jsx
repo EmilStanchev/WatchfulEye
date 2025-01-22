@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-
+import logo from "../../../assets/logo.png";
 const HeroSection = () => {
   return (
     <section
       id="hero"
       className="relative bg-cover bg-center h-screen w-full"
-      style={{ backgroundImage: "url('/path/to/your/background-image.jpg')" }}
+      style={{ backgroundImage: `url($'{}')` }}
     >
       {/* Overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-60"></div>

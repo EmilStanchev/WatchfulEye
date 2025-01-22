@@ -4,12 +4,19 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { useUserIncidents } from "../hooks/incidents";
 import { deleteIncident } from "../services/incidents";
 import ConfirmationModal from "../components/reusable/ConfirmationModal"; // Import the modal
+import { useNavigate } from "react-router-dom";
 
 const UserIncidents = ({ userEmail }) => {
   const { incidents, error, refetchIncidents } = useUserIncidents(userEmail);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [incidentToDelete, setIncidentToDelete] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleEditClick = (id) => {
+    navigate(`/edit-incident/${id}`);
+  };
 
   const onDeleteIncident = (id) => {
     console.log(id);
@@ -78,12 +85,13 @@ const UserIncidents = ({ userEmail }) => {
                 {incident.description}
               </td>
               <td className="px-6 py-4 text-gray-500">
-                {new Date(incident?.createdAt * 1000).toUTCString()}
+                {new Date(incident?.createdAt).toUTCString()}
               </td>
               <td className="px-6 py-4 text-gray-500">{incident?.address}</td>
               <td className="px-6 py-4 text-center space-x-4">
                 {/* Edit Button */}
                 <button
+                  onClick={() => handleEditClick(incident?.id)}
                   className="text-blue-500 hover:text-blue-700 transition duration-150"
                   title="Edit Incident"
                 >

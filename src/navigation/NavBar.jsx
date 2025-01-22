@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { links, notAuthorizedLinks } from "../assets/data/links";
 import { signOut } from "firebase/auth";
 import { auth } from "../../FirebaseConfig";
+import logo from "../assets/logo.png";
 
 const Navigation = ({ user }) => {
   const navigate = useNavigate();
@@ -25,7 +26,9 @@ const Navigation = ({ user }) => {
       <div className="max-w-full mx-auto px-2 md:px-4 py-2 flex justify-between items-center">
         {/* Website Title */}
         <div className="text-sm sm:text-base md:text-lg font-bold truncate">
-          <Link to="/">Neighborhood`s Safety</Link>
+          <Link to="/">
+            <img src={logo} alt="website logo" className="w-40 h-8" />
+          </Link>
         </div>
 
         {/* Hamburger menu for mobile */}

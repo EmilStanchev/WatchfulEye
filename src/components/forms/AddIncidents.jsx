@@ -84,7 +84,6 @@ const AddIncident = () => {
     formik.setFieldValue("coordinates.lat", lat);
     formik.setFieldValue("coordinates.lng", lng);
 
-    // Fetch the address using the coordinates
     fetchAddress(lat, lng);
   };
 

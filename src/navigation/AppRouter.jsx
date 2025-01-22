@@ -6,10 +6,9 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import UserIncidents from "../pages/UserIncidents";
 import About from "../pages/About";
+import EditIncident from "../pages/EditIncident";
 
 const AppRouter = ({ user }) => {
-  console.log(user);
-
   return (
     <Routes>
       <Route path="/" element={user ? <MapComponent /> : <About />} />
@@ -18,6 +17,8 @@ const AppRouter = ({ user }) => {
         path="/myReports"
         element={user ? <UserIncidents userEmail={user?.email} /> : <Login />}
       />
+      <Route path="/edit-incident/:id" element={<EditIncident />} />
+
       <Route path="/about" element={<About />} />
       <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
 
