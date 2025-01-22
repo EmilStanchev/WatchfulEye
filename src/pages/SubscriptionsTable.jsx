@@ -19,7 +19,11 @@ const SubscriptionsList = ({ userId }) => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (subscriptions.length === 0)
-    return <div className="text-gray-500">No subscriptions found.</div>;
+    return (
+      <div className="text-black flex justify-center items-center text-xl">
+        No subscriptions found.
+      </div>
+    );
 
   return (
     <div className="max-w-4xl mx-auto p-6">

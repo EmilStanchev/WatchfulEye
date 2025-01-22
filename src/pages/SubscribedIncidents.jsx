@@ -24,8 +24,15 @@ const SubscribedIncidents = ({ userId }) => {
   if (error) return <div className="text-red-500">{error}</div>;
   if (incidents.length === 0)
     return (
-      <div className="text-gray-500">
-        No incidents found for subscribed neighborhoods.
+      <div className="text-black text-xl flex justify-center items-center flex-col gap-5">
+        <p>No incidents found for subscribed neighborhoods.</p>
+
+        <Link
+          to="/subscribeToNeighbor"
+          className="px-6 sm:px-8 py-2 sm:py-3 capitalize bg-blue-500 text-white rounded-md font-medium text-sm sm:text-lg hover:bg-blue-600 transition duration-200"
+        >
+          Subscribe now
+        </Link>
       </div>
     );
 

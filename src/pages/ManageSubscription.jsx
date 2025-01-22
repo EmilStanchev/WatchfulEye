@@ -26,29 +26,27 @@ const ManageSubscriptions = ({ userId }) => {
 
   return (
     <>
-      <div className="max-w-md mx-auto p-6">
-        <h2 className="text-2xl font-bold mb-4">
-          Управление на абонаменти по квартали
-        </h2>
+      <div className="max-w-md mx-auto p-6 flex flex-col justify-center items-center">
+        <h2 className="text-2xl font-bold mb-4">Manage your neighborhoods</h2>
         <select
           value={neighborhood}
           onChange={(e) => setNeighborhood(e.target.value)}
           className="w-full p-2 border rounded mb-4"
         >
-          <option value="" disabled>
-            Изберете квартал
+          <option value="" disabled className="text-center">
+            Choose neighborhood
           </option>
           {neighborhoodsInSofia.map((n) => (
-            <option key={n} value={n}>
+            <option key={n} value={n} className="text-center">
               {n}
             </option>
           ))}
         </select>
         <button
           onClick={handleSubscribe}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white text-xl px-4 py-2 rounded text-center hover:bg-blue-600  "
         >
-          Абонирай се
+          Subscribe
         </button>
         {message && (
           <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
