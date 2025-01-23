@@ -7,14 +7,17 @@ import ConfirmationModal from "../components/reusable/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import UserMetrics from "../components/UI/User/UserMetrics"; // Import the new Metrics component
 import CustomSpinner from "../components/reusable/CustomSpinner";
+import { useSubscriptions } from "../hooks/subscriptions";
 
-const UserIncidents = ({ userEmail }) => {
-  const { incidents, error, refetchIncidents, loading } =
-    useUserIncidents(userEmail);
+const UserIncidents = ({ user }) => {
+  const { incidents, error, refetchIncidents, loading } = useUserIncidents(
+    user?.email
+  );
   const { incidents: totalIncidents } = useIncidents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [incidentToDelete, setIncidentToDelete] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const { subscriptions } = useSubscriptions(user?.uid);
 
   const userIncidentsCount = incidents?.length || 0;
   const navigate = useNavigate();
@@ -64,6 +67,8 @@ const UserIncidents = ({ userEmail }) => {
       <UserMetrics
         userIncidentsCount={userIncidentsCount}
         totalIncidentsCount={totalIncidents?.length}
+        userNeighborhoods={subscriptions?.length}
+        incidents={incidents}
       />
       <table className="min-w-full bg-white rounded-lg shadow-md border-collapse mt-6">
         <thead>

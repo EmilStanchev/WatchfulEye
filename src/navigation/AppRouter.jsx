@@ -17,7 +17,7 @@ const AppRouter = ({ user }) => {
       <Route path="/addIncident" element={<AddIncidentForm />} />
       <Route
         path="/myReports"
-        element={user ? <UserIncidents userEmail={user?.email} /> : <Login />}
+        element={user ? <UserIncidents user={user} /> : <Login />}
       />
       <Route path="/edit-incident/:id" element={<EditIncident />} />
       <Route

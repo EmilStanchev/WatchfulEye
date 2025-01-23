@@ -27,13 +27,7 @@ export const useSubscribedIncidents = (userId) => {
 };
 
 export const useSubscriptions = (userId) => {
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    refetch, // Add refetch to enable manual refetching
-  } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["subscriptions", userId],
     queryFn: () => getUserSubscriptions(userId),
   });

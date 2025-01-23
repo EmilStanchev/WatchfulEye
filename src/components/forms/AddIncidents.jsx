@@ -62,7 +62,7 @@ const AddIncident = () => {
           coordinates: values.coordinates,
           images: imageUrls,
           createdAt: Date.now(),
-          createdBy: user?.email,
+          createdBy: { userName: user?.displayName, email: user?.email },
           neighborhood: neighborhood,
         };
         console.log(newIncident);

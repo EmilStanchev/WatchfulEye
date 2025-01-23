@@ -25,7 +25,6 @@ const MapComponent = () => {
   // Custom component to disable/enable map interactions
   const DisableMapInteractions = ({ disabled }) => {
     const map = useMap();
-    console.log(disabled);
 
     if (disabled) {
       map.dragging.disable();

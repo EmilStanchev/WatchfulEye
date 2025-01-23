@@ -43,7 +43,7 @@ const getIncidentsForUser = async (userEmail) => {
         ...document.data(),
         id: document.id,
       }))
-      .filter((incident) => incident.createdBy === userEmail); // Filter for current user
+      .filter((incident) => incident.createdBy?.email === userEmail); // Filter for current user
 
     return data;
   } catch (error) {
