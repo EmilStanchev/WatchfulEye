@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import {
   MapContainer,
   TileLayer,
   CircleMarker,
   Popup,
   Tooltip,
+  useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Modal from "./Modal";
@@ -11,9 +13,38 @@ import { useIncidents } from "../../hooks/incidents";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import TooltipButton from "../UI/TooltipButton";
+import { useState } from "react";
 
 const MapComponent = () => {
   const { incidents = [], loading, error } = useIncidents();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const onClosePopUp = () => {
+    setIsModalOpen(false);
+  };
+  // Custom component to disable/enable map interactions
+  const DisableMapInteractions = ({ disabled }) => {
+    const map = useMap();
+    console.log(disabled);
+
+    if (disabled) {
+      map.dragging.disable();
+      map.scrollWheelZoom.disable();
+      map.boxZoom.disable();
+      map.keyboard.disable();
+      map.doubleClickZoom.disable();
+      map.touchZoom.disable();
+    } else {
+      map.dragging.enable();
+      map.scrollWheelZoom.enable();
+      map.boxZoom.enable();
+      map.keyboard.enable();
+      map.doubleClickZoom.enable();
+      map.touchZoom.enable();
+    }
+
+    return null;
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -45,6 +76,8 @@ const MapComponent = () => {
         zoom={15}
         className="h-screen lg:h-[92%]  w-full absolute z-20"
       >
+        <DisableMapInteractions disabled={isModalOpen} />
+
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
@@ -62,10 +95,21 @@ const MapComponent = () => {
             ]}
             radius={5}
             fillOpacity={0.5}
+            eventHandlers={{
+              popupclose: () => {
+                console.log("pressed");
+                onClosePopUp();
+              },
+            }}
           >
             <Tooltip>{incident?.title}</Tooltip>
             <Popup>
-              <Modal incident={incident} />
+              <button className="absolute top-0 right-0"></button>
+              <Modal
+                incident={incident}
+                onOpen={() => setIsModalOpen(true)}
+                onClose={isModalOpen} // Reset modal state
+              />
             </Popup>
           </CircleMarker>
         ))}

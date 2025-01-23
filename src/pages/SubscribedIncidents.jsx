@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useSubscribedIncidents } from "../hooks/subscriptions";
 import NeighborCard from "../components/UI/cards/NeighborCard";
+import CustomSpinner from "../components/reusable/CustomSpinner";
 
 const SubscribedIncidents = ({ userId }) => {
   const { incidents, loading, error } = useSubscribedIncidents(userId);
@@ -20,7 +21,7 @@ const SubscribedIncidents = ({ userId }) => {
       )
     : incidents;
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <CustomSpinner />;
   if (error) return <div className="text-red-500">{error}</div>;
   if (incidents.length === 0)
     return (

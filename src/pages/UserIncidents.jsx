@@ -6,9 +6,11 @@ import { deleteIncident } from "../services/incidents";
 import ConfirmationModal from "../components/reusable/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import UserMetrics from "../components/UI/User/UserMetrics"; // Import the new Metrics component
+import CustomSpinner from "../components/reusable/CustomSpinner";
 
 const UserIncidents = ({ userEmail }) => {
-  const { incidents, error, refetchIncidents } = useUserIncidents(userEmail);
+  const { incidents, error, refetchIncidents, loading } =
+    useUserIncidents(userEmail);
   const { incidents: totalIncidents } = useIncidents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [incidentToDelete, setIncidentToDelete] = useState(null);
@@ -38,6 +40,9 @@ const UserIncidents = ({ userEmail }) => {
     setIsModalOpen(false);
   };
 
+  if (loading) {
+    return <CustomSpinner />;
+  }
   if (error) {
     return (
       <div className="text-center text-red-500 mt-6">

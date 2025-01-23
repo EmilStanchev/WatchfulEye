@@ -1,28 +1,41 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { FiTrash2 } from "react-icons/fi";
 import { useSubscriptions } from "../hooks/subscriptions";
 import { useState } from "react";
+import ConfirmationModal from "../components/reusable/ConfirmationModal";
+import CustomSpinner from "../components/reusable/CustomSpinner";
 
 const SubscriptionsList = ({ userId }) => {
   const { subscriptions, loading, error, unsubscribe } =
     useSubscriptions(userId);
   const [message, setMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSubId, setSelectedSubId] = useState(null);
 
-  const onDelete = async (subId) => {
+  const openModal = (subId) => {
+    setSelectedSubId(subId);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedSubId(null);
+    setIsModalOpen(false);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      await unsubscribe(subId);
-      setMessage("You unsubscribed successfully");
+      await unsubscribe(selectedSubId);
+      setMessage("Incident deleted successfully!");
+      setTimeout(() => setMessage(""), 3000);
     } catch (err) {
       setMessage("Failed to unsubscribe. Please try again.");
+    } finally {
+      closeModal();
     }
   };
 
-  if (loading)
-    return (
-      <div className="text-center text-gray-500 text-lg">
-        Loading your subscriptions...
-      </div>
-    );
+  if (loading) return <CustomSpinner />;
   if (error) return <div className="text-red-500 text-center">{error}</div>;
   if (subscriptions.length === 0)
     return (
@@ -40,23 +53,23 @@ const SubscriptionsList = ({ userId }) => {
         {subscriptions.map((sub) => (
           <div
             key={sub.id}
-            className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 shadow-xl rounded-xl p-6 transform transition-transform hover:scale-105 hover:shadow-2xl"
+            className="bg-white shadow-lg rounded-xl p-6 transform transition-transform hover:scale-105 hover:shadow-2xl"
           >
-            <h3 className="text-2xl font-semibold mb-3 text-white">
-              {sub.neighborhoodName}
-            </h3>
-            <p className="text-gray-400 text-sm mb-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">{sub.neighborhoodName}</h3>
+              <button
+                onClick={() => openModal(sub.id)}
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-full"
+              >
+                <FiTrash2 className="text-sm" />
+              </button>
+            </div>
+            <p className="text-gray-500 text-sm">
               Subscribed on:{" "}
-              <span className="text-gray-300">
+              <span className="text-gray-400">
                 {new Date(sub?.createdAt?.seconds * 1000).toLocaleDateString()}
               </span>
             </p>
-            <button
-              onClick={() => onDelete(sub.id)}
-              className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg w-full transition-all duration-300 ease-in-out"
-            >
-              <FiTrash2 className="mr-2 text-lg" /> Unsubscribe
-            </button>
           </div>
         ))}
       </div>
@@ -65,6 +78,12 @@ const SubscriptionsList = ({ userId }) => {
           {message}
         </div>
       )}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onConfirm={handleConfirmDelete}
+        message="Are you sure you want to unsubscribe? This action cannot be undone."
+      />
     </div>
   );
 };

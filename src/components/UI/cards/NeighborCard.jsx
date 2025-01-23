@@ -27,7 +27,7 @@ const NeighborCard = ({ incident }) => {
             to="/"
             className="px-4 py-1 bg-blue-500 text-white rounded-lg text-xs font-medium hover:bg-blue-600 transition-colors"
           >
-            View Details
+            View Map
           </Link>
         </div>
       </div>

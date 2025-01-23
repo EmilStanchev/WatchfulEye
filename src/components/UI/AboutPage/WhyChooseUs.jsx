@@ -20,10 +20,10 @@ const features = [
     icon: "fas fa-users", // Replace with a React Icon or FontAwesome class
   },
   {
-    title: "Secure and Reliable",
+    title: "Stay informed",
     description:
-      "Your data is encrypted and secured, ensuring that your reports and personal information remain private.",
-    icon: "fas fa-lock", // Replace with a React Icon or FontAwesome class
+      "Subscribe for your favorite neighborhoods and check all of reported incidents related to your neighborhoods",
+    icon: "fas fa-info", // Replace with a React Icon or FontAwesome class
   },
 ];
 

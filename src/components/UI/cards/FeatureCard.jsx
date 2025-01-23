@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { FaMapMarkerAlt, FaBullhorn, FaUsers, FaLock } from "react-icons/fa";
+import { FaMapMarkerAlt, FaBullhorn, FaUsers, FaInfo } from "react-icons/fa";
 
 const iconMap = {
   "fas fa-map-marker-alt": (
@@ -7,7 +7,7 @@ const iconMap = {
   ),
   "fas fa-bullhorn": <FaBullhorn className="text-blue-500" size={40} />,
   "fas fa-users": <FaUsers className="text-blue-500" size={40} />,
-  "fas fa-lock": <FaLock className="text-blue-500" size={40} />,
+  "fas fa-info": <FaInfo className="text-blue-500" size={40} />,
 };
 
 export default function FeatureCard({ feature }) {

@@ -18,7 +18,9 @@ const ManageSubscriptions = ({ userId }) => {
 
     try {
       await subscribeToNeighborhood(userId, neighborhood);
+
       setMessage("Successfully subscribed!");
+      setTimeout(() => setMessage(""), 3000);
       setNeighborhood("");
       refetch();
     } catch (error) {
@@ -56,7 +58,7 @@ const ManageSubscriptions = ({ userId }) => {
           </button>
         </div>
         {message && (
-          <div className="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md text-center">
+          <div className="mt-4 bg-green-500 flex justify-center text-white py-2 px-4 rounded-lg shadow-md text-center">
             {message}
           </div>
         )}

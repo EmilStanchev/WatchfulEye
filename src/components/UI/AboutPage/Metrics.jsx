@@ -1,4 +1,5 @@
 import MetricCard from "../cards/MetricCard";
+import { neighborhoodsInSofia } from "../../../assets/data/data";
 
 const metrics = [
   {
@@ -14,15 +15,15 @@ const metrics = [
     icon: "fas fa-users",
   },
   {
-    title: "Resolved Cases",
-    value: "893",
+    title: "Registered Neighborhoods",
+    value: `${neighborhoodsInSofia?.length}`,
     description: "Issues resolved with community efforts.",
     icon: "fas fa-check-circle",
   },
   {
-    title: "Average Response Time",
-    value: "5 min",
-    description: "Swift action for reported incidents.",
+    title: "Average adding time",
+    value: "1 min",
+    description: "Report new incident",
     icon: "fas fa-clock",
   },
 ];
