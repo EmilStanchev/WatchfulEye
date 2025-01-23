@@ -20,6 +20,8 @@ const neighborhoodsInSofia = [
   "НПЗ Искър",
   "ж.к Панчарево",
   "ж.к Банкя",
-  "ж.щк Дървеница",
+  "ж.к. Дървеница",
+  "ж.к. Бъкстон",
 ];
+
 export { neighborhoodsInSofia };

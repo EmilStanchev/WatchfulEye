@@ -1,55 +1,62 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { subscribeToNeighborhood } from "../services/subscriptions";
 import { neighborhoodsInSofia } from "../assets/data/data";
 import SubscriptionsTable from "./SubscriptionsTable";
+import { useSubscriptions } from "../hooks/subscriptions";
 
 const ManageSubscriptions = ({ userId }) => {
   const [neighborhood, setNeighborhood] = useState("");
   const [message, setMessage] = useState("");
+  const { refetch } = useSubscriptions(userId);
 
   const handleSubscribe = async () => {
     if (!neighborhood) {
-      setMessage("Моля, изберете квартал.");
+      setMessage("Please choose a neighborhood.");
       return;
     }
 
     try {
-      const response = await subscribeToNeighborhood(userId, neighborhood);
-      setMessage(response.message || "Успешно се абонирахте!");
-      setNeighborhood(""); // Clear selected neighborhood
+      await subscribeToNeighborhood(userId, neighborhood);
+      setMessage("Successfully subscribed!");
+      setNeighborhood("");
+      refetch();
     } catch (error) {
-      setMessage("Неуспешен опит за абонамент. Опитайте отново по-късно.");
+      setMessage("Subscription failed. Please try again later.");
+      console.error(error);
     }
   };
 
   return (
     <>
-      <div className="max-w-md mx-auto p-6 flex flex-col justify-center items-center">
-        <h2 className="text-2xl font-bold mb-4">Manage your neighborhoods</h2>
-        <select
-          value={neighborhood}
-          onChange={(e) => setNeighborhood(e.target.value)}
-          className="w-full p-2 border rounded mb-4"
-        >
-          <option value="" disabled className="text-center">
-            Choose neighborhood
-          </option>
-          {neighborhoodsInSofia.map((n) => (
-            <option key={n} value={n} className="text-center">
-              {n}
+      <div className="max-w-md mx-auto p-6">
+        <h2 className="text-3xl font-bold mb-4 text-center">
+          Manage Your Neighborhoods
+        </h2>
+        <div className="relative">
+          <select
+            value={neighborhood}
+            onChange={(e) => setNeighborhood(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+          >
+            <option value="" disabled>
+              Choose neighborhood
             </option>
-          ))}
-        </select>
-        <button
-          onClick={handleSubscribe}
-          className="bg-blue-500 text-white text-xl px-4 py-2 rounded text-center hover:bg-blue-600  "
-        >
-          Subscribe
-        </button>
+            {neighborhoodsInSofia.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={handleSubscribe}
+            className="absolute right-0 top-0 bg-blue-500 text-white px-4 py-3 rounded-r focus:outline-none hover:bg-blue-600"
+          >
+            Subscribe
+          </button>
+        </div>
         {message && (
-          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
+          <div className="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md text-center">
             {message}
           </div>
         )}

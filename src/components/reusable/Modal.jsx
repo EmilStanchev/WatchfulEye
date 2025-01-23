@@ -7,7 +7,7 @@ const Modal = ({ incident }) => {
       <h2 className="text-2xl font-bold mb-4">{incident.title}</h2>
       <p className="mb-2">{incident.description}</p>
       <p className="text-sm text-gray-700 mb-4">Address: {incident.address}</p>
-      <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto">
+      <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto">
         {incident.images.map((img, index) => (
           <img
             key={index}

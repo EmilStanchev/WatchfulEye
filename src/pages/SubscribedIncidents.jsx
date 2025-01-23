@@ -38,12 +38,6 @@ const SubscribedIncidents = ({ userId }) => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <Link
-        to={"/subscribeToNeighbor"}
-        className="mt-4 inline-block text-2xl text-blue-500 hover:underline"
-      >
-        Subscribe to new neighborhood
-      </Link>
       <h2 className="text-2xl font-bold mb-6">
         Incidents from Subscribed Neighborhoods
       </h2>

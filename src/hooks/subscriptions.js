@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   fetchSubscribedIncidents,
   getUserSubscriptions,
@@ -7,61 +6,54 @@ import {
 } from "../services/subscriptions";
 
 export const useSubscribedIncidents = (userId) => {
-  const [incidents, setIncidents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: incidents = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["subscribedIncidents", userId],
+    queryFn: () => fetchSubscribedIncidents(userId),
+    enabled: !!userId, // Only fetch if userId exists
+    retry: 2, // Retry twice on failure
+    staleTime: 1000 * 60 * 5, // Data stays fresh for 5 minutes
+  });
 
-  useEffect(() => {
-    const fetchIncidents = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchSubscribedIncidents(userId);
-        setIncidents(data);
-      } catch (err) {
-        setError("Failed to load incidents.");
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (userId) fetchIncidents();
-  }, [userId]);
-
-  return { incidents, loading, error };
+  return {
+    incidents,
+    loading: isLoading,
+    error: isError ? error.message || "Failed to load incidents." : null,
+  };
 };
 
 export const useSubscriptions = (userId) => {
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch, // Add refetch to enable manual refetching
+  } = useQuery({
+    queryKey: ["subscriptions", userId],
+    queryFn: () => getUserSubscriptions(userId),
+  });
 
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        setLoading(true);
-        const subs = await getUserSubscriptions(userId);
-        setSubscriptions(subs);
-      } catch (err) {
-        setError("Failed to fetch subscriptions.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSubscriptions();
-  }, [userId]);
-
-  const unsubscribe = async (subscriptionId) => {
+  const unsubscribe = async (subId) => {
     try {
-      await unsubscribeFromNeighborhood(subscriptionId);
-      setSubscriptions((prev) =>
-        prev.filter((sub) => sub.id !== subscriptionId)
-      );
+      await unsubscribeFromNeighborhood(subId);
+      refetch(); // Refetch after a subscription is deleted
     } catch (err) {
-      setError("Failed to unsubscribe.");
+      console.log(err);
+
+      throw new Error("Failed to unsubscribe");
     }
   };
 
-  return { subscriptions, loading, error, unsubscribe };
+  return {
+    subscriptions: data || [],
+    loading: isLoading,
+    error: isError ? error.message : null,
+    unsubscribe,
+    refetch, // Expose refetch to the component
+  };
 };
