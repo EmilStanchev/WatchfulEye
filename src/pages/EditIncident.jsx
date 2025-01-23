@@ -27,6 +27,7 @@ const EditIncident = () => {
     description: "",
     address: "",
     coordinates: { lat: null, lng: null },
+    neighborhood: "",
   });
 
   useEffect(() => {
@@ -37,7 +38,8 @@ const EditIncident = () => {
           title: data.title,
           description: data.description,
           address: data.address,
-          coordinates: data.coordinates || { lat: 51.505, lng: -0.09 }, // Default coordinates
+          coordinates: data.coordinates || { lat: 51.505, lng: -0.09 },
+          neighborhood: data.neighborhood,
         });
       } catch (err) {
         setError("Failed to load incident data");
@@ -67,14 +69,37 @@ const EditIncident = () => {
       return "Error fetching address";
     }
   };
+  const fetchNeighborhood = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+      );
+      const data = await response.json();
 
+      // Extract the neighborhood
+      const address = data.address;
+      let neighborhood =
+        address.neighbourhood || address.suburb || address.city_district;
+
+      // Fallback if neighborhood is not available
+      if (!neighborhood) {
+        neighborhood = "Unknown Neighborhood";
+      }
+      return neighborhood;
+    } catch (error) {
+      console.error("Error fetching neighborhood:", error);
+      return "Error fetching neighborhood";
+    }
+  };
   const setCoordinates = async ({ lat, lng }) => {
     try {
       const address = await fetchAddress(lat, lng);
+      const currentNeighborhood = await fetchNeighborhood(lat, lng);
       setFormData((prev) => ({
         ...prev,
         coordinates: { lat, lng },
         address: address,
+        neighborhood: currentNeighborhood,
       }));
     } catch (error) {
       console.error("Error setting coordinates:", error);

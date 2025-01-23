@@ -85,6 +85,9 @@ const UserIncidents = ({ user }) => {
             <th className="text-left px-6 py-4 font-medium text-gray-600">
               Address
             </th>
+            <th className="text-left px-6 py-4 font-medium text-gray-600">
+              Neighborhood
+            </th>
             <th className="text-center px-6 py-4 font-medium text-gray-600">
               Actions
             </th>
@@ -104,6 +107,9 @@ const UserIncidents = ({ user }) => {
                 {new Date(incident?.createdAt).toUTCString()}
               </td>
               <td className="px-6 py-4 text-gray-500">{incident?.address}</td>
+              <td className="px-6 py-4 text-gray-500">
+                {incident?.neighborhood}
+              </td>
               <td className="px-6 py-4 text-center space-x-4">
                 <button
                   onClick={() => handleEditClick(incident?.id)}
