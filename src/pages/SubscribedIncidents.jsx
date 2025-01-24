@@ -9,12 +9,10 @@ const SubscribedIncidents = ({ userId }) => {
   const { incidents, loading, error } = useSubscribedIncidents(userId);
   const [selectedNeighborhood, setSelectedNeighborhood] = useState("");
 
-  // Extract unique neighborhoods for the dropdown
   const neighborhoods = [
     ...new Set(incidents.map((incident) => incident.neighborhood)),
   ];
 
-  // Filter incidents based on selected neighborhood
   const filteredIncidents = selectedNeighborhood
     ? incidents.filter(
         (incident) => incident.neighborhood === selectedNeighborhood

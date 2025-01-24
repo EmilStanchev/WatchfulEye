@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../FirebaseConfig";
+import logo from "../../assets/logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,6 +26,13 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <img
+            className="mx-auto h-24 w-auto"
+            src={logo}
+            alt="Company company"
+          />
+        </div>
         <h2 className="text-2xl font-bold text-gray-700 text-center mb-6">
           Welcome Back!
         </h2>
@@ -67,9 +75,9 @@ const Login = () => {
             Login
           </button>
         </form>
-        <p className="mt-4 text-center text-sm text-gray-600">
+        <p className="mt-4 text-center text-sm text-gray-600 flex flex-col">
           Don't have an account?
-          <a href="/register" className="text-blue-500 hover:underline">
+          <a href="/register" className="text-blue-500 hover:underline text-xl">
             Register
           </a>
         </p>

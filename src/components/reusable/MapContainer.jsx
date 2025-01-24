@@ -67,6 +67,7 @@ const MapComponent = () => {
             tooltipText="Add New Incident"
             icon={FaPlus}
             onClick={() => console.log("Button clicked!")}
+            isStyled={true}
           />
         </Link>
       </div>

@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import { FaEdit, FaTrash } from "react-icons/fa";
 import { useIncidents, useUserIncidents } from "../hooks/incidents";
 import { deleteIncident } from "../services/incidents";
 import ConfirmationModal from "../components/reusable/ConfirmationModal";
@@ -8,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import UserMetrics from "../components/UI/User/UserMetrics"; // Import the new Metrics component
 import CustomSpinner from "../components/reusable/CustomSpinner";
 import { useSubscriptions } from "../hooks/subscriptions";
+import IncidentsTable from "../components/UI/User/IncidentsTable";
+import Message from "../components/UI/Message";
 
 const UserIncidents = ({ user }) => {
   const { incidents, error, refetchIncidents, loading } = useUserIncidents(
@@ -63,73 +64,18 @@ const UserIncidents = ({ user }) => {
   }
 
   return (
-    <div className="overflow-x-auto p-4">
+    <div className="p-6 space-y-6">
       <UserMetrics
         userIncidentsCount={userIncidentsCount}
         totalIncidentsCount={totalIncidents?.length}
         userNeighborhoods={subscriptions?.length}
         incidents={incidents}
       />
-      <table className="min-w-full bg-white rounded-lg shadow-md border-collapse mt-6">
-        <thead>
-          <tr className="bg-gray-100 border-b">
-            <th className="text-left px-6 py-4 font-medium text-gray-600">
-              Title
-            </th>
-            <th className="text-left px-6 py-4 font-medium text-gray-600">
-              Description
-            </th>
-            <th className="text-left px-6 py-4 font-medium text-gray-600">
-              Date
-            </th>
-            <th className="text-left px-6 py-4 font-medium text-gray-600">
-              Address
-            </th>
-            <th className="text-left px-6 py-4 font-medium text-gray-600">
-              Neighborhood
-            </th>
-            <th className="text-center px-6 py-4 font-medium text-gray-600">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {incidents.map((incident) => (
-            <tr
-              key={incident.id}
-              className="border-b hover:bg-gray-50 transition duration-200"
-            >
-              <td className="px-6 py-4 text-gray-700">{incident.title}</td>
-              <td className="px-6 py-4 text-gray-500">
-                {incident.description}
-              </td>
-              <td className="px-6 py-4 text-gray-500">
-                {new Date(incident?.createdAt).toUTCString()}
-              </td>
-              <td className="px-6 py-4 text-gray-500">{incident?.address}</td>
-              <td className="px-6 py-4 text-gray-500">
-                {incident?.neighborhood}
-              </td>
-              <td className="px-6 py-4 text-center space-x-4">
-                <button
-                  onClick={() => handleEditClick(incident?.id)}
-                  className="text-blue-500 hover:text-blue-700 transition duration-150"
-                  title="Edit Incident"
-                >
-                  <FaEdit size={18} />
-                </button>
-                <button
-                  onClick={() => handleDeleteClick(incident?.id)}
-                  className="text-red-500 hover:text-red-700 transition duration-150"
-                  title="Delete Incident"
-                >
-                  <FaTrash size={18} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <IncidentsTable
+        incidents={incidents}
+        handleDeleteClick={handleDeleteClick}
+        handleEditClick={handleEditClick}
+      />
 
       <ConfirmationModal
         isOpen={isModalOpen}
@@ -138,11 +84,7 @@ const UserIncidents = ({ user }) => {
         message="Are you sure you want to delete this incident?"
       />
 
-      {successMessage && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
-          {successMessage}
-        </div>
-      )}
+      {successMessage && <Message message={successMessage} />}
     </div>
   );
 };

@@ -5,7 +5,8 @@ import { useSubscriptions } from "../hooks/subscriptions";
 import { useState } from "react";
 import ConfirmationModal from "../components/reusable/ConfirmationModal";
 import CustomSpinner from "../components/reusable/CustomSpinner";
-
+import Message from "../components/UI/Message.jsx";
+import SubscriptionCard from "../components/UI/cards/SubscriptionCard.jsx";
 const SubscriptionsList = ({ userId }) => {
   const { subscriptions, loading, error, unsubscribe } =
     useSubscriptions(userId);
@@ -51,33 +52,10 @@ const SubscriptionsList = ({ userId }) => {
       </h2>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {subscriptions.map((sub) => (
-          <div
-            key={sub.id}
-            className="bg-white shadow-lg rounded-xl p-6 transform transition-transform hover:scale-105 hover:shadow-2xl"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">{sub.neighborhoodName}</h3>
-              <button
-                onClick={() => openModal(sub.id)}
-                className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-full"
-              >
-                <FiTrash2 className="text-sm" />
-              </button>
-            </div>
-            <p className="text-gray-500 text-sm">
-              Subscribed on:{" "}
-              <span className="text-gray-400">
-                {new Date(sub?.createdAt?.seconds * 1000).toLocaleDateString()}
-              </span>
-            </p>
-          </div>
+          <SubscriptionCard key={sub?.id} sub={sub} openModal={openModal} />
         ))}
       </div>
-      {message && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-3 px-6 rounded-lg shadow-md text-center transition-opacity duration-300 ease-in-out">
-          {message}
-        </div>
-      )}
+      {message && <Message message={message} />}
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={closeModal}

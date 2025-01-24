@@ -10,16 +10,8 @@ const UserMetrics = ({
   userNeighborhoods,
   incidents,
 }) => {
-  const [showMetrics, setShowMetrics] = useState(false);
-  const [peakReportingDay, setPeakReportingDay] = useState("Loading...");
   const [showCharts, setShowCharts] = useState(false);
-
-  const toggleMetricsVisibility = () => {
-    setShowMetrics((prev) => !prev);
-  };
-  const toggleChartsVisibility = () => {
-    setShowCharts((prev) => !prev);
-  };
+  const [peakReportingDay, setPeakReportingDay] = useState("Loading...");
 
   useEffect(() => {
     if (incidents?.length > 0) {
@@ -32,62 +24,55 @@ const UserMetrics = ({
   }, [incidents]);
 
   return (
-    <div className="bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 text-black p-8 rounded-2xl shadow-lg space-y-6">
-      <h2 className="text-3xl font-bold text-center">
-        Incident Metrics Dashboard
+    <div className="bg-white rounded-lg shadow-lg p-8 space-y-6">
+      <h2 className="text-2xl font-semibold text-gray-800">
+        Incident Dashboard
       </h2>
-      <button
-        onClick={toggleMetricsVisibility}
-        className="bg-gradient-to-r from-gray-700 to-black text-white px-6 py-3 rounded-lg hover:scale-105 transform transition duration-300 shadow-lg"
-      >
-        {showMetrics ? "Hide Metrics" : "Show Metrics"}
-      </button>
 
-      {showMetrics && (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            <MetricCard
-              title="Your Incidents"
-              value={userIncidentsCount}
-              gradient="from-blue-500 to-indigo-500"
-              icon="user"
-            />
-            <MetricCard
-              title="Total Incidents"
-              value={totalIncidentsCount}
-              gradient="from-green-500 to-teal-500"
-              icon="globe"
-            />
-            <MetricCard
-              title="Subscribed Neighborhoods"
-              value={userNeighborhoods}
-              gradient="from-yellow-500 to-yellow-700"
-              icon="home"
-            />
-            <MetricCard
-              title="Peak Reporting Day"
-              value={peakReportingDay}
-              gradient="from-orange-500 to-red-600"
-              icon="calendar"
-            />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <MetricCard
+          title="Your Incidents"
+          value={userIncidentsCount}
+          // gradient="from-blue-500 to-indigo-500"
+          gradient="from-white to-gray-200"
+          icon="user"
+        />
+        <MetricCard
+          title="Total Incidents"
+          value={totalIncidentsCount}
+          gradient="from-white to-gray-200"
+          //  gradient="from-green-500 to-teal-500"
+          icon="globe"
+        />
+        <MetricCard
+          title="Subscribed Neighborhoods"
+          value={userNeighborhoods}
+          gradient="from-white to-gray-200"
+          //  gradient="from-yellow-400 to-orange-500"
+          icon="home"
+        />
+        <MetricCard
+          title="Peak Reporting Day"
+          value={peakReportingDay}
+          gradient="from-white to-gray-200"
+          //gradient="from-red-400 to-pink-500"
+          icon="calendar"
+        />
+      </div>
+
+      <div>
+        <button
+          onClick={() => setShowCharts(!showCharts)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-all"
+        >
+          {showCharts ? "Hide Charts" : "Show Charts"}
+        </button>
+        {showCharts && (
+          <div className="mt-6">
+            <IncidentTrendChart incidents={incidents} />
           </div>
-          <div className="mt-8 flex flex-col gap-5 ">
-            <button
-              onClick={toggleChartsVisibility}
-              className="bg-gradient-to-r from-gray-700 to-black w-full md:w-1/6 text-white px-6 py-3 rounded-lg hover:scale-105 transform transition duration-300 shadow-lg"
-            >
-              {showCharts ? "Hide Charts" : "Show Charts"}
-            </button>
-            <div className="">
-              {showCharts && (
-                <div className="grid grid-cols-3 gap-6 flex-wrap">
-                  <IncidentTrendChart incidents={incidents} />
-                </div>
-              )}
-            </div>
-          </div>
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
 };

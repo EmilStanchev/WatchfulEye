@@ -1,8 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 
-const TooltipButton = ({ tooltipText, icon: Icon, onClick }) => {
+const TooltipButton = ({ tooltipText, icon: Icon, onClick, isStyled }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const classNamesForButton = isStyled
+    ? "w-16 h-16 bg-blue-600 text-white rounded-full shadow-xl flex justify-center items-center hover:bg-blue-700 active:scale-95 transition-all duration-300"
+    : " text-white rounded-full shadow-xl flex justify-center items-center hover:bg-blue-700 active:scale-95 transition-all duration-300";
+  console.log(isHovered);
 
   return (
     <div className="relative">
@@ -15,13 +19,13 @@ const TooltipButton = ({ tooltipText, icon: Icon, onClick }) => {
 
       {/* Button */}
       <button
-        className="w-16 h-16 bg-blue-600 text-white rounded-full shadow-xl flex justify-center items-center hover:bg-blue-700 active:scale-95 transition-all duration-300"
+        className={classNamesForButton}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={onClick}
         aria-label={tooltipText}
       >
-        <Icon className="h-8 w-8" />
+        {Icon && <Icon className="h-8 w-8" />}
       </button>
     </div>
   );

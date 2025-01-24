@@ -1,19 +1,13 @@
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { getIncidentById, updateIncident } from "../services/incidents";
-
-const LocationPicker = ({ setCoordinates }) => {
-  useMapEvents({
-    click(e) {
-      const { lat, lng } = e.latlng;
-      setCoordinates({ lat, lng });
-    },
-  });
-  return null;
-};
+import {
+  fetchAddress,
+  fetchNeighborhood,
+} from "../services/helpers/locationService";
+import IncidentForm from "../components/forms/EditIncidentForm";
+import CustomSpinner from "../components/reusable/CustomSpinner";
 
 const EditIncident = () => {
   const { id } = useParams();
@@ -21,7 +15,6 @@ const EditIncident = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -43,7 +36,7 @@ const EditIncident = () => {
         });
       } catch (err) {
         setError("Failed to load incident data");
-        console.log(err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -57,49 +50,15 @@ const EditIncident = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const fetchAddress = async (lat, lng) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-      );
-      const data = await response.json();
-      return data?.display_name || "Address not found";
-    } catch (error) {
-      console.error("Error fetching address:", error);
-      return "Error fetching address";
-    }
-  };
-  const fetchNeighborhood = async (lat, lng) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-      );
-      const data = await response.json();
-
-      // Extract the neighborhood
-      const address = data.address;
-      let neighborhood =
-        address.neighbourhood || address.suburb || address.city_district;
-
-      // Fallback if neighborhood is not available
-      if (!neighborhood) {
-        neighborhood = "Unknown Neighborhood";
-      }
-      return neighborhood;
-    } catch (error) {
-      console.error("Error fetching neighborhood:", error);
-      return "Error fetching neighborhood";
-    }
-  };
   const setCoordinates = async ({ lat, lng }) => {
     try {
       const address = await fetchAddress(lat, lng);
-      const currentNeighborhood = await fetchNeighborhood(lat, lng);
+      const neighborhood = await fetchNeighborhood(lat, lng);
       setFormData((prev) => ({
         ...prev,
         coordinates: { lat, lng },
-        address: address,
-        neighborhood: currentNeighborhood,
+        address,
+        neighborhood,
       }));
     } catch (error) {
       console.error("Error setting coordinates:", error);
@@ -109,25 +68,21 @@ const EditIncident = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateIncident(id, {
-        ...formData,
-        coordinates: formData.coordinates,
-      });
+      await updateIncident(id, formData);
       navigate("/myReports");
     } catch (err) {
       setError("Failed to update incident");
-      console.log(err);
+      console.error(err);
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <CustomSpinner />;
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="max-w-xl  mx-auto p-6">
-      {/* Back Button */}
+    <div className="max-w-xl mx-auto p-6">
       <button
-        onClick={() => navigate(-1)} // Go back to the previous page
+        onClick={() => navigate(-1)}
         className="flex items-center text-white bg-gray-700 hover:bg-gray-800 px-4 py-2 rounded-md mb-4"
       >
         <svg
@@ -147,71 +102,12 @@ const EditIncident = () => {
         Back
       </button>
       <h2 className="text-2xl font-bold mb-4">Edit Incident</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          ></textarea>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Address</label>
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Select Location on Map
-          </label>
-          <MapContainer
-            center={[formData.coordinates.lat, formData.coordinates.lng]}
-            zoom={13}
-            style={{ height: "300px", width: "100%" }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <LocationPicker setCoordinates={setCoordinates} />
-            <Marker
-              position={[formData.coordinates.lat, formData.coordinates.lng]}
-            ></Marker>
-          </MapContainer>
-        </div>
-        <div>
-          <p>
-            <strong>Latitude:</strong> {formData.coordinates.lat}{" "}
-            <strong>Longitude:</strong> {formData.coordinates.lng}
-          </p>
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Save Changes
-        </button>
-      </form>
+      <IncidentForm
+        formData={formData}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+        setCoordinates={setCoordinates}
+      />
     </div>
   );
 };

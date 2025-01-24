@@ -4,7 +4,7 @@ import { subscribeToNeighborhood } from "../services/subscriptions";
 import { neighborhoodsInSofia } from "../assets/data/data";
 import SubscriptionsTable from "./SubscriptionsTable";
 import { useSubscriptions } from "../hooks/subscriptions";
-
+import Message from "../components/UI/Message";
 const ManageSubscriptions = ({ userId }) => {
   const [neighborhood, setNeighborhood] = useState("");
   const [message, setMessage] = useState("");
@@ -57,11 +57,7 @@ const ManageSubscriptions = ({ userId }) => {
             Subscribe
           </button>
         </div>
-        {message && (
-          <div className="mt-4 bg-green-500 flex justify-center text-white py-2 px-4 rounded-lg shadow-md text-center">
-            {message}
-          </div>
-        )}
+        {message && <Message message={message} />}
       </div>
       <SubscriptionsTable userId={userId} />
     </>
