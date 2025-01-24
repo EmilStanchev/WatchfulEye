@@ -9,33 +9,41 @@ import About from "../pages/About";
 import EditIncident from "../pages/EditIncident";
 import ManageSubscriptions from "../pages/ManageSubscription";
 import SubscribedIncidents from "../pages/SubscribedIncidents";
+import ScrollToTop from "./scrollToTop";
 
 const AppRouter = ({ user }) => {
   return (
-    <Routes>
-      <Route path="/" element={user ? <MapComponent /> : <About />} />
-      <Route path="/addIncident" element={<AddIncidentForm />} />
-      <Route
-        path="/myReports"
-        element={user ? <UserIncidents user={user} /> : <Login />}
-      />
-      <Route path="/edit-incident/:id" element={<EditIncident />} />
-      <Route
-        path="/subscribeToNeighbor"
-        element={user ? <ManageSubscriptions userId={user?.uid} /> : <Login />}
-      />
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={user ? <MapComponent /> : <About />} />
+        <Route path="/addIncident" element={<AddIncidentForm />} />
+        <Route
+          path="/myReports"
+          element={user ? <UserIncidents user={user} /> : <Login />}
+        />
+        <Route path="/edit-incident/:id" element={<EditIncident />} />
+        <Route
+          path="/subscribeToNeighbor"
+          element={
+            user ? <ManageSubscriptions userId={user?.uid} /> : <Login />
+          }
+        />
 
-      <Route
-        path="/subscribedIncidents"
-        element={user ? <SubscribedIncidents userId={user?.uid} /> : <Login />}
-      />
-      <Route path="/about" element={<About />} />
-      <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-      <Route
-        path="/register"
-        element={user ? <Navigate to="/" /> : <Register />}
-      />
-    </Routes>
+        <Route
+          path="/subscribedIncidents"
+          element={
+            user ? <SubscribedIncidents userId={user?.uid} /> : <Login />
+          }
+        />
+        <Route path="/about" element={<About />} />
+        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        <Route
+          path="/register"
+          element={user ? <Navigate to="/" /> : <Register />}
+        />
+      </Routes>
+    </>
   );
 };
 
