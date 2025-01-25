@@ -1,5 +1,5 @@
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import LocationPicker from "../reusable/Map/LocationPicker";
+import LocationPicker from "../reusable/Map/MapPicker";
 
 /* eslint-disable react/prop-types */
 const IncidentForm = ({

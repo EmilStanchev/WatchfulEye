@@ -1,20 +1,21 @@
-import { useFormik } from "formik";
-import MapPicker from "../reusable/Map/MapPicker";
-import AddressField from "../UI/incidents/AddressField";
-import ImageUploader from "../UI/incidents/ImageUploader";
-import * as Yup from "yup";
-
 /* eslint-disable react/prop-types */
-const IncidentForm = ({
-  onSubmit,
-  coordinates,
-  address,
-  neighborhood,
-  imageUrls,
-  onAddImage,
-  onRemoveImage,
-  onMapClick,
-}) => {
+import { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import MapSection from "../reusable/Map/MapSections";
+import { ImageList } from "../reusable/Map/ImageList";
+import {
+  fetchAddress,
+  fetchNeighborhood,
+} from "../../services/helpers/locationService";
+
+export const IncidentForm = ({ onSubmit, isSubmitting }) => {
+  const [coordinates, setCoordinates] = useState({ lat: "", lng: "" });
+  const [imageUrls, setImageUrls] = useState([]);
+  const [address, setAddress] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [currentImageUrl, setCurrentImageUrl] = useState("");
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -28,72 +29,123 @@ const IncidentForm = ({
         .max(500, "Description must be 500 characters or less")
         .required("Description is required"),
     }),
-    onSubmit: (values) => {
-      onSubmit({
+    onSubmit: async (values, { resetForm }) => {
+      const formValues = {
         ...values,
-        coordinates,
         address,
         neighborhood,
         images: imageUrls,
-      });
+        coordinates,
+      };
+
+      await onSubmit(formValues, resetForm);
+      setImageUrls([]);
+      setCoordinates({ lat: "", lng: "" });
+      setAddress("");
+      setNeighborhood("");
     },
   });
 
+  const handleMapClick = async (e) => {
+    const { lat, lng } = e.latlng;
+    setCoordinates({ lat, lng });
+
+    try {
+      const fetchedAddress = await fetchAddress(lat, lng);
+      const fetchedNeighborhood = await fetchNeighborhood(lat, lng);
+
+      setAddress(fetchedAddress);
+      setNeighborhood(fetchedNeighborhood);
+    } catch (error) {
+      console.error("Error fetching location data:", error);
+    }
+  };
+
+  const handleAddImage = () => {
+    if (currentImageUrl.trim()) {
+      setImageUrls((prevUrls) => [...prevUrls, currentImageUrl.trim()]);
+      setCurrentImageUrl("");
+    }
+  };
+
+  const removeImageUrl = (url) => {
+    setImageUrls(imageUrls.filter((imageUrl) => imageUrl !== url));
+  };
+
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-6">
-      {/* Title */}
       <div>
-        <label className="block text-gray-700 text-sm font-medium mb-2">
-          Incident Title
+        <label htmlFor="title" className="block text-gray-700">
+          Title
         </label>
         <input
+          id="title"
           name="title"
           type="text"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.title}
-          className="w-full p-3 border border-gray-300 rounded-md"
+          className="w-full border rounded-md p-2"
         />
         {formik.touched.title && formik.errors.title && (
-          <p className="text-red-500 text-xs mt-2">{formik.errors.title}</p>
+          <p className="text-red-500 text-sm">{formik.errors.title}</p>
         )}
       </div>
-      {/* Description */}
+
       <div>
-        <label className="block text-gray-700 text-sm font-medium mb-2">
-          Incident Description
+        <label htmlFor="description" className="block text-gray-700">
+          Description
         </label>
         <textarea
+          id="description"
           name="description"
-          rows="4"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.description}
-          className="w-full p-3 border border-gray-300 rounded-md"
+          className="w-full border rounded-md p-2"
         />
         {formik.touched.description && formik.errors.description && (
-          <p className="text-red-500 text-xs mt-2">
-            {formik.errors.description}
-          </p>
+          <p className="text-red-500 text-sm">{formik.errors.description}</p>
         )}
       </div>
 
-      <ImageUploader
-        imageUrls={imageUrls}
-        onAddImage={onAddImage}
-        onRemoveImage={onRemoveImage}
-      />
+      <div>
+        <label htmlFor="images" className="block text-gray-700">
+          Add Image URL
+        </label>
+        <div className="flex items-center space-x-4">
+          <input
+            type="text"
+            value={currentImageUrl}
+            onChange={(e) => setCurrentImageUrl(e.target.value)}
+            className="w-full border rounded-md p-2"
+            placeholder="Enter image URL"
+          />
+          <button
+            type="button"
+            onClick={handleAddImage}
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+          >
+            Add Image
+          </button>
+        </div>
+      </div>
 
-      <MapPicker coordinates={coordinates} onMapClick={onMapClick} />
-      <AddressField address={address} />
+      <ImageList imageUrls={imageUrls} removeImageUrl={removeImageUrl} />
+
+      <MapSection coordinates={coordinates} handleMapClick={handleMapClick} />
+
+      <p className="text-gray-600 text-sm">
+        Selected Location: {address || "No location selected"}
+      </p>
 
       <button
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+        disabled={isSubmitting}
+        className="bg-blue-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
       >
-        Submit Incident
+        {isSubmitting ? "Submitting..." : "Submit Incident"}
       </button>
     </form>
   );
 };
-export default IncidentForm;

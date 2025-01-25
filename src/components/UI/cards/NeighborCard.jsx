@@ -6,7 +6,11 @@ const NeighborCard = ({ incident }) => {
     <div className="max-w-md mx-auto bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col">
       <div className="relative h-48">
         <img
-          src={incident?.images[0]}
+          src={
+            incident?.images[0]
+              ? incident?.images[0]
+              : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDxBClJiLKIN7S25p3gK_5aX_HSxGZ_kbnrA&s"
+          }
           alt={incident?.title}
           className="w-full h-full object-cover"
         />

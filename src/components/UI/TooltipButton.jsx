@@ -6,7 +6,6 @@ const TooltipButton = ({ tooltipText, icon: Icon, onClick, isStyled }) => {
   const classNamesForButton = isStyled
     ? "w-16 h-16 bg-blue-600 text-white rounded-full shadow-xl flex justify-center items-center hover:bg-blue-700 active:scale-95 transition-all duration-300"
     : " text-white rounded-full shadow-xl flex justify-center items-center hover:bg-blue-700 active:scale-95 transition-all duration-300";
-  console.log(isHovered);
 
   return (
     <div className="relative">

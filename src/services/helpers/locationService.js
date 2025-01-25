@@ -4,7 +4,9 @@ export const fetchAddress = async (lat, lng) => {
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
     );
     const data = await response.json();
-    return data?.display_name || "Address not found";
+    console.log(data.display_name, " from service");
+
+    return data.display_name || "Unknown Address";
   } catch (error) {
     console.error("Error fetching address:", error);
     return "Error fetching address";
@@ -17,18 +19,23 @@ export const fetchNeighborhood = async (lat, lng) => {
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
     );
     const data = await response.json();
+
     const address = data.address;
-    return (
-      address.neighbourhood ||
-      address.suburb ||
-      address.city_district ||
-      "Unknown Neighborhood"
-    );
+    let neighborhood =
+      address.neighbourhood || address.suburb || address.city_district;
+
+    if (!neighborhood) {
+      neighborhood = "Unknown Neighborhood";
+    }
+    console.log(neighborhood, " from service");
+
+    return neighborhood;
   } catch (error) {
     console.error("Error fetching neighborhood:", error);
     return "Error fetching neighborhood";
   }
 };
+
 export const fetchLocationData = async (lat, lng) => {
   try {
     const response = await fetch(
