@@ -21,37 +21,27 @@ export const fetchNeighborhood = async (lat, lng) => {
     const data = await response.json();
 
     const address = data.address;
+
+    // Extract neighborhood and city
     let neighborhood =
-      address.neighbourhood || address.suburb || address.city_district;
+      address?.neighbourhood || address?.suburb || address.city_district;
+    const city = address.city || address.town || address.village;
 
     if (!neighborhood) {
       neighborhood = "Unknown Neighborhood";
     }
-    console.log(neighborhood, " from service");
 
-    return neighborhood;
+    if (!city) {
+      return neighborhood; // Return just the neighborhood if the city is unavailable
+    }
+
+    // Format neighborhood and city
+    const formattedAddress = `${neighborhood}, ${city}`;
+    console.log(formattedAddress, "from service");
+
+    return formattedAddress;
   } catch (error) {
     console.error("Error fetching neighborhood:", error);
     return "Error fetching neighborhood";
-  }
-};
-
-export const fetchLocationData = async (lat, lng) => {
-  try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-    );
-    const data = await response.json();
-    const address = data.display_name;
-    const neighborhood =
-      data.address.neighbourhood ||
-      data.address.suburb ||
-      data.address.city_district ||
-      "Unknown Neighborhood";
-
-    return { address, neighborhood };
-  } catch (error) {
-    console.error("Error fetching location data:", error);
-    return { address: "Error fetching address", neighborhood: "Unknown" };
   }
 };

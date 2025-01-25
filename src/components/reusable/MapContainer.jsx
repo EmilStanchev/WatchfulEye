@@ -14,6 +14,7 @@ import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import TooltipButton from "../UI/TooltipButton";
 import { useState } from "react";
+import CustomSpinner from "../reusable/CustomSpinner";
 
 const MapComponent = () => {
   const { incidents = [], loading, error } = useIncidents();
@@ -46,7 +47,7 @@ const MapComponent = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <CustomSpinner />;
   }
 
   if (error) {
