@@ -1,7 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 /* eslint-disable react/prop-types */
 const NeighborCard = ({ incident }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/${incident?.coordinates?.lat}/${incident?.coordinates?.lng}`);
+  };
   return (
     <div className="max-w-md mx-auto bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col">
       <div className="relative h-48">
@@ -27,12 +32,12 @@ const NeighborCard = ({ incident }) => {
         </p>
         <div className="mt-auto flex justify-between items-center text-sm text-gray-500">
           <span>{new Date(incident?.createdAt).toLocaleDateString()}</span>
-          <Link
-            to="/"
+          <button
+            onClick={handleClick}
             className="px-4 py-1 bg-blue-500 text-white rounded-lg text-xs font-medium hover:bg-blue-600 transition-colors"
           >
             View Map
-          </Link>
+          </button>
         </div>
       </div>
     </div>

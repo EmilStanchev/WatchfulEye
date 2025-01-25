@@ -11,13 +11,14 @@ import "leaflet/dist/leaflet.css";
 import Modal from "./Modal";
 import { useIncidents } from "../../hooks/incidents";
 import { FaPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import TooltipButton from "../UI/TooltipButton";
 import { useState } from "react";
 import CustomSpinner from "../reusable/CustomSpinner";
 
 const MapComponent = () => {
   const { incidents = [], loading, error } = useIncidents();
+  const { lat, long } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onClosePopUp = () => {
@@ -73,8 +74,8 @@ const MapComponent = () => {
         </Link>
       </div>
       <MapContainer
-        center={[42.66291, 23.37234]}
-        zoom={15}
+        center={lat && long ? [lat, long] : [42.66291, 23.37234]}
+        zoom={lat && long ? 24 : 15}
         className="h-screen lg:h-[92%]  w-full absolute z-20"
       >
         <DisableMapInteractions disabled={isModalOpen} />

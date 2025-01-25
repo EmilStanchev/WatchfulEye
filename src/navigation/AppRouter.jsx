@@ -17,6 +17,10 @@ const AppRouter = ({ user }) => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={user ? <MapComponent /> : <About />} />
+        <Route
+          path="/:lat/:long"
+          element={user ? <MapComponent /> : <About />}
+        />
         <Route path="/addIncident" element={<AddIncidentForm />} />
         <Route
           path="/myReports"

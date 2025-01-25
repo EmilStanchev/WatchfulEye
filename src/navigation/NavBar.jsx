@@ -28,10 +28,10 @@ const Navigation = ({ user }) => {
         <div className="flex gap-10">
           <div className="text-sm sm:text-base md:text-lg font-bold truncate">
             <Link to="/">
-              <img src={logo} alt="website logo" className="w-40 h-8" />
+              <img src={logo} alt="website logo" className="w-40 h-12" />
             </Link>
           </div>
-          <div className="hidden lg:flex lg:space-x-4 gap-10">
+          <div className="hidden lg:flex lg:space-x-4 gap-10 justify-center items-center">
             {formattedLinks?.map((item) => (
               <Link
                 key={item.name}
