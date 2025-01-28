@@ -9,7 +9,7 @@ import About from "../pages/About";
 import EditIncident from "../pages/EditIncident";
 import ManageSubscriptions from "../pages/ManageSubscription";
 import SubscribedIncidents from "../pages/SubscribedIncidents";
-import ScrollToTop, { ScrollToElement } from "./scrollToTop";
+import ScrollToTop, { ScrollToElement } from "./ScrollToTop";
 
 const AppRouter = ({ user }) => {
   return (
