@@ -10,9 +10,9 @@ import {
 const features = [
   {
     icon: <FaBell />,
-    title: "Instant Alerts",
+    title: "Neighborhood Alerts",
     description:
-      "Get notified about critical updates and safety warnings in real time, so you never miss important information.",
+      "Subscribe to neighborhoods of your choice and get instant updates on reported incidents and safety tips.",
     color: "from-blue-500 via-blue-600 to-blue-700",
     bgColor: "bg-blue-600",
   },

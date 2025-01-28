@@ -5,12 +5,16 @@ import { links, notAuthorizedLinks } from "../assets/data/links";
 import { signOut } from "firebase/auth";
 import { auth } from "../../FirebaseConfig";
 import logo from "../assets/logo.png";
+import NotificationModal from "../components/reusable/NotificationModal";
+import { FaEnvelope } from "react-icons/fa";
+import { useNotifications } from "../hooks/notifications";
 
 const Navigation = ({ user }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false); // State to manage mobile menu open/close
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const formattedLinks = user ? links : notAuthorizedLinks;
+  const { notifications, notificationsRefetch } = useNotifications(user?.uid);
 
   const handleLogout = async () => {
     try {
@@ -21,10 +25,11 @@ const Navigation = ({ user }) => {
     }
   };
 
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <nav className="bg-gray-800 text-white shadow-md sticky z-50 top-0">
       <div className="max-w-full mx-auto px-2 md:px-4 py-2 flex justify-between items-center">
-        {/* Website Title */}
         <div className="flex gap-10">
           <div className="text-sm sm:text-base md:text-lg font-bold truncate">
             <Link to="/">
@@ -42,6 +47,28 @@ const Navigation = ({ user }) => {
               </Link>
             ))}
           </div>
+          {user && (
+            <button
+              className="relative  hover:bg-gray-600 text-white text-sm px-3 py-2 rounded-lg"
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+            >
+              <FaEnvelope size={18} />
+              {notifications?.length > 0 && (
+                <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs px-2 py-1">
+                  {notifications?.length}
+                </span>
+              )}
+            </button>
+          )}
+          {isModalOpen && (
+            <NotificationModal
+              closeModal={closeModal}
+              notifications={notifications}
+              refreshNotifications={notificationsRefetch}
+            />
+          )}
         </div>
 
         {/* Hamburger menu for mobile */}

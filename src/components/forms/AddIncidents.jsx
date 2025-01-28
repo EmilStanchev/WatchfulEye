@@ -2,6 +2,7 @@ import { useState } from "react";
 import { auth } from "../../../FirebaseConfig";
 import { addIncident } from "../../services/incidents";
 import { IncidentForm } from "./IncidentForm";
+import { notifySubscribers } from "../../services/notifications";
 
 const AddIncident = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,6 +22,11 @@ const AddIncident = () => {
       };
 
       await addIncident(newIncident);
+      await notifySubscribers(
+        newIncident?.neighborhood,
+        `Added a new incident in ${newIncident?.neighborhood}`,
+        user?.uid
+      );
 
       setMessage({ type: "success", text: "Incident added successfully!" });
       resetForm();
