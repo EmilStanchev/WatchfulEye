@@ -1,5 +1,13 @@
 # Watchful Eye
 
+<a href="https://watchfuleye.vercel.app/" target="_blank">
+  <button style="padding: 10px 20px; background-color: #4CAF50; color: white; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; margin-bottom:15px ">
+    View Live Demo
+  </button>
+</a>
+</a>
+
+
 Welcome to the **Watchful Eye** web app! This platform is designed to empower communities by providing a space where neighbors can report suspicious activities, stay informed about local security incidents, and ensure the safety of their neighborhoods. The app offers a seamless experience for reporting, viewing, and managing security incidents in real-time.
 
 ---
