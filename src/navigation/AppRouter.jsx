@@ -9,12 +9,14 @@ import About from "../pages/About";
 import EditIncident from "../pages/EditIncident";
 import ManageSubscriptions from "../pages/ManageSubscription";
 import SubscribedIncidents from "../pages/SubscribedIncidents";
-import ScrollToTop from "./scrollToTop";
+import ScrollToTop, { ScrollToElement } from "./scrollToTop";
 
 const AppRouter = ({ user }) => {
   return (
     <>
       <ScrollToTop />
+      <ScrollToElement />
+
       <Routes>
         <Route path="/" element={user ? <MapComponent /> : <About />} />
         <Route
