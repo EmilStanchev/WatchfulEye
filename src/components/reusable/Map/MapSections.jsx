@@ -3,8 +3,6 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import MapEvents from "./MapEvents";
 
 const MapSection = ({ coordinates, handleMapClick }) => {
-  console.log(coordinates?.lat, coordinates?.lng, "from section");
-
   return (
     <div>
       <h3 className="text-lg font-semibold text-gray-700">

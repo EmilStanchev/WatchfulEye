@@ -1,14 +1,27 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { subscribeToNeighborhood } from "../services/subscriptions";
 import { neighborhoodsInSofia } from "../assets/data/data";
 import SubscriptionsTable from "./SubscriptionsTable";
 import { useSubscriptions } from "../hooks/subscriptions";
 import Message from "../components/UI/Message";
+
 const ManageSubscriptions = ({ userId }) => {
   const [neighborhood, setNeighborhood] = useState("");
   const [message, setMessage] = useState("");
-  const { refetch } = useSubscriptions(userId);
+  const { refetch, subscriptions } = useSubscriptions(userId);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  const subscribedNeighborhoods = subscriptions.map(
+    (sub) => sub.neighborhoodName
+  );
+
+  const availableNeighborhoods = neighborhoodsInSofia.filter(
+    (n) => !subscribedNeighborhoods.includes(n)
+  );
 
   const handleSubscribe = async () => {
     if (!neighborhood) {
@@ -44,7 +57,7 @@ const ManageSubscriptions = ({ userId }) => {
             <option value="" disabled>
               Choose neighborhood
             </option>
-            {neighborhoodsInSofia.map((n) => (
+            {availableNeighborhoods.map((n) => (
               <option key={n} value={n}>
                 {n}
               </option>

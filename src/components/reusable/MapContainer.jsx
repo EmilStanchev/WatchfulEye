@@ -76,7 +76,8 @@ const MapComponent = () => {
       <MapContainer
         center={lat && long ? [lat, long] : [42.66291, 23.37234]}
         zoom={lat && long ? 24 : 15}
-        className="h-screen lg:h-[92%]  w-full absolute z-20"
+        className="h-screen lg:h-[90%]  w-full absolute z-20"
+        zoomControl={false}
       >
         <DisableMapInteractions disabled={isModalOpen} />
 
@@ -99,7 +100,6 @@ const MapComponent = () => {
             fillOpacity={0.5}
             eventHandlers={{
               popupclose: () => {
-                console.log("pressed");
                 onClosePopUp();
               },
             }}

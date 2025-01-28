@@ -69,7 +69,8 @@ const UserIncidents = ({ user }) => {
         userIncidentsCount={userIncidentsCount}
         totalIncidentsCount={totalIncidents?.length}
         userNeighborhoods={subscriptions?.length}
-        incidents={incidents}
+        incidents={totalIncidents}
+        userIncidents={incidents}
       />
       <IncidentsTable
         incidents={incidents}

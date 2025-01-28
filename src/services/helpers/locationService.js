@@ -4,7 +4,6 @@ export const fetchAddress = async (lat, lng) => {
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
     );
     const data = await response.json();
-    console.log(data.display_name, " from service");
 
     return data.display_name || "Unknown Address";
   } catch (error) {
@@ -37,7 +36,6 @@ export const fetchNeighborhood = async (lat, lng) => {
 
     // Format neighborhood and city
     const formattedAddress = `${neighborhood}, ${city}`;
-    console.log(formattedAddress, "from service");
 
     return formattedAddress;
   } catch (error) {

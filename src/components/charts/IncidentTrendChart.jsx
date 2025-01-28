@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-const IncidentTrendChart = ({ incidents }) => {
+const IncidentTrendChart = ({ incidents, title }) => {
   // Process incidents into trends (group by month)
   const processIncidents = (incidents) => {
     const months = [
@@ -134,7 +134,7 @@ const IncidentTrendChart = ({ incidents }) => {
   return (
     <div className="bg-white p-4 rounded-xl shadow-md max-w-sm mx-auto">
       <h3 className="text-center text-lg font-semibold text-gray-700 mb-4">
-        Incident Trends
+        {title}
       </h3>
       <div style={{ height: "200px" }}>
         <Line data={chartData} options={chartOptions} />

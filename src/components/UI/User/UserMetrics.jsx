@@ -9,6 +9,7 @@ const UserMetrics = ({
   totalIncidentsCount,
   userNeighborhoods,
   incidents,
+  userIncidents,
 }) => {
   const [showCharts, setShowCharts] = useState(false);
   const [peakReportingDay, setPeakReportingDay] = useState("Loading...");
@@ -68,8 +69,12 @@ const UserMetrics = ({
           {showCharts ? "Hide Charts" : "Show Charts"}
         </button>
         {showCharts && (
-          <div className="mt-6">
-            <IncidentTrendChart incidents={incidents} />
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-32">
+            <IncidentTrendChart incidents={incidents} title="Total incidents" />
+            <IncidentTrendChart
+              incidents={userIncidents}
+              title="Your incidents"
+            />
           </div>
         )}
       </div>
